@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemeSearch.API", "MemeSearch.API\MemeSearch.API.csproj", "{D743317E-C33D-42BD-A4FB-2E6D5167AE8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemeSearch.Logic", "MemeSearch.Logic\MemeSearch.Logic.csproj", "{0EC111C0-75C0-4E13-8274-25E8239872AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D743317E-C33D-42BD-A4FB-2E6D5167AE8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D743317E-C33D-42BD-A4FB-2E6D5167AE8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D743317E-C33D-42BD-A4FB-2E6D5167AE8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D743317E-C33D-42BD-A4FB-2E6D5167AE8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EC111C0-75C0-4E13-8274-25E8239872AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EC111C0-75C0-4E13-8274-25E8239872AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EC111C0-75C0-4E13-8274-25E8239872AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EC111C0-75C0-4E13-8274-25E8239872AC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1A652B8D-DB4F-42B1-9A22-6DE0C073711A}
+	EndGlobalSection
+EndGlobal
