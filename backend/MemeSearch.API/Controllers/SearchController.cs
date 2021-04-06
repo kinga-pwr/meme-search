@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MemeSearch.Logic.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MemeSearch.API.Controllers
 {
@@ -6,8 +7,11 @@ namespace MemeSearch.API.Controllers
     [Route("[controller]")]
     public class SearchController : ControllerBase
     {
-        public SearchController()
+        private readonly ISearchService _searchService;
+
+        public SearchController(ISearchService searchService)
         {
+            _searchService = searchService;
         }
 
         [HttpGet("IsAlive")]

@@ -1,3 +1,6 @@
+using MemeSearch.API.Extensions;
+using MemeSearch.Logic.Interfaces;
+using MemeSearch.Logic.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +40,9 @@ namespace MemeSearch.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MemeSearch.API", Version = "v1" });
             });
+
+            services.SetSearchEngine(Configuration);
+            services.AddTransient<ISearchService, SearchService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
