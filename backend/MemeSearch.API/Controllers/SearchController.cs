@@ -19,5 +19,11 @@ namespace MemeSearch.API.Controllers
         {
             return Ok("MemeSearch is running");
         }
+
+        [HttpGet("Search/{query}")]
+        public IActionResult Search(string query, int start = 0)
+        {
+            return Ok(_searchService.Search(query, start));
+        }
     }
 }

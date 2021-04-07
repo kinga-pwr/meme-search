@@ -17,6 +17,12 @@ namespace MemeSearch.API.Extensions
 
             var client = new ElasticClient(connectionSettings);
 
+            if (!client.Ping().IsValid)
+            {
+                // if the engine is not running the application must be stopped
+                Environment.Exit(0);
+            }
+
             services.AddSingleton<IElasticClient>(client);
 
             if (!client.Indices.Exists(configuration["Elasticsearch:Index"]).Exists

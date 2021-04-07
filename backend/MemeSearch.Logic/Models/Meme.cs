@@ -11,7 +11,7 @@ namespace MemeSearch.Logic.Models
         [Text]
         public string Content { get; set; }
         
-        [Text(Ignore = true)]
+        [Text]
         public string ImageUrl { get; set; }
 
         [Text]
@@ -29,7 +29,10 @@ namespace MemeSearch.Logic.Models
         [Keyword]
         public string Category { get; set; }
         
-        [Text(Ignore = true)]
+        [Text]
         public string Url { get; set; }
+
+        [Text(Ignore = true)]
+        public string ContentHighlight { get; set; }
     }
 }
