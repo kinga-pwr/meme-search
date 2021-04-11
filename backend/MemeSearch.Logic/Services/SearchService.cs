@@ -4,6 +4,7 @@ using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace MemeSearch.Logic.Services
 {
@@ -24,12 +25,12 @@ namespace MemeSearch.Logic.Services
                 s.From(start)
                 .Size(20)
                 .TrackScores(true)
-                .Query(q => GetSearchQuery(q, query, GetAllSearchableFields))
+                .Query(q => ParseQuery(q, query, GetAllSearchableFields))
                 .Highlight(h => h
                     .PreTags("<highlight>")
                     .PostTags("</highlight>")
                     .Encoder(HighlighterEncoder.Html)
-                    .HighlightQuery(q => GetSearchQuery(q, query, GetHighlightFields))
+                    .HighlightQuery(q => ParseQuery(q, query, GetHighlightFields))
                     .Fields(f => f.Field(fl => fl.Content)
                                     .Type("plain")
                                     .ForceSource()
@@ -57,19 +58,108 @@ namespace MemeSearch.Logic.Services
                 .Documents;
         }
 
-
-        private static QueryContainer GetSearchQuery(QueryContainerDescriptor<Meme> q, string query,
+        private static QueryContainer ParseQuery(QueryContainerDescriptor<Meme> q, string query,
             Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
         {
-            var searchWords = query.Split("OR", StringSplitOptions.RemoveEmptyEntries).ToList();
-            var result = new List<QueryContainer>();
+            return ParseExpression(q, query, 0, getSearchFields).container;
+        }
 
-            foreach (var searchWord in searchWords)
+        private static (QueryContainer container, int position) ParseExpression(QueryContainerDescriptor<Meme> q, string query,
+            int position, Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
+        {
+            var executionStack = new Stack<QueryContainer>();
+            var lastOperator = "";
+            var currentWord = new StringBuilder();
+
+            int i = position;
+            while(i < query.Length)
             {
-                result.Add(SearchQuery(q, searchWord, getSearchFields));
+                switch (query[i])
+                {
+                    case '"':
+                        var expression = ReadExactExpression(query, i);
+                        executionStack.Push(SearchQuery(q, expression, getSearchFields));
+                        i += expression.Length;
+                        break;
+                    
+                    case ')':
+                        return CalculateFinalResult();
+                    
+                    case '(':
+                        var subExpression = ParseExpression(q, query, i + 1, getSearchFields);
+                        executionStack.Push(subExpression.container);
+                        i = subExpression.position;
+                        break;
+                    
+                    case 'O' when i < query.Length - 2 && query.Substring(i, 3) == "OR ":
+                        HandleOperator("OR", ExecuteANDCalculation);
+                        break;
+                    
+                    case 'A' when i < query.Length - 3 && query.Substring(i, 4) == "AND ":
+                        HandleOperator("AND", ExecuteORCalculation);
+                        break;
+                    
+                    default:
+                        currentWord.Append(query[i]);
+                        i++;
+                        break;
+                }
             }
 
-            return q.Bool(m => m.Should(result.ToArray()).MinimumShouldMatch(1));
+            return CalculateFinalResult();
+
+            (QueryContainer container, int position) CalculateFinalResult()
+            {
+                if (currentWord.Length > 0)
+                {
+                    executionStack.Push(SearchQuery(q, currentWord.ToString(), getSearchFields));
+                }
+
+                if (executionStack.Count > 1)
+                {
+                    var finalResult = lastOperator == "OR"
+                            ? q.Bool(m => m.Should(executionStack.ToArray()).MinimumShouldMatch(1))
+                            : q.Bool(m => m.Must(executionStack.ToArray()));
+                    return (finalResult, i + 1);
+                }
+                else if (executionStack.Count == 1)
+                {
+                    return (executionStack.Pop(), i + 1);
+                }
+                else throw new ArgumentException("Wrong syntax");
+            }
+
+            void HandleOperator(string operatorName, Func<QueryContainer> oppositeOperatorExecution)
+            {
+                if (currentWord.Length > 0)
+                {
+                    executionStack.Push(SearchQuery(q, currentWord.ToString(), getSearchFields));
+                }
+
+                if (!string.IsNullOrEmpty(lastOperator) && lastOperator != operatorName)
+                {
+                    var previousResult = oppositeOperatorExecution();
+                    executionStack.Clear();
+                    executionStack.Push(previousResult);
+                }
+
+                lastOperator = operatorName;
+                currentWord.Clear();
+                i += operatorName.Length + 1;
+            }
+
+            QueryContainer ExecuteORCalculation() => q.Bool(m => m.Should(executionStack.ToArray()).MinimumShouldMatch(1));
+            QueryContainer ExecuteANDCalculation() => q.Bool(m => m.Must(executionStack.ToArray()));
+        }
+
+        private static string ReadExactExpression(string query, int position)
+        {
+            var endOfExpression = query.IndexOf('"', position + 1);
+
+            if (endOfExpression == -1)
+                throw new ArgumentException("Exact expression missing closing paranthesis");
+
+            return query.Substring(position, query.Length - endOfExpression + 1);  
         }
 
         private static QueryContainer SearchQuery(QueryContainerDescriptor<Meme> q, string searchWord, Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
