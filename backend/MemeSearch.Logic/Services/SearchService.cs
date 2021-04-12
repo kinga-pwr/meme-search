@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MemeSearch.Logic.Services
 {
@@ -30,7 +31,7 @@ namespace MemeSearch.Logic.Services
                     .PreTags("<highlight>")
                     .PostTags("</highlight>")
                     .Encoder(HighlighterEncoder.Html)
-                    .HighlightQuery(q => ParseQuery(q, query, GetHighlightFields))
+                    .HighlightQuery(q => HighlightSearch(q, query))
                     .Fields(f => f.Field(fl => fl.Content)
                                     .Type("plain")
                                     .ForceSource()
@@ -58,12 +59,13 @@ namespace MemeSearch.Logic.Services
                 .Documents;
         }
 
+        #region MainQuery
         private static QueryContainer ParseQuery(QueryContainerDescriptor<Meme> q, string query,
             Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
         {
             return ParseExpression(q, query, 0, getSearchFields).container;
         }
-
+        
         private static (QueryContainer container, int position) ParseExpression(QueryContainerDescriptor<Meme> q, string query,
             int position, Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
         {
@@ -159,7 +161,7 @@ namespace MemeSearch.Logic.Services
             if (endOfExpression == -1)
                 throw new ArgumentException("Exact expression missing closing paranthesis");
 
-            return query.Substring(position, query.Length - endOfExpression + 1);  
+            return query.Substring(position, endOfExpression - position + 1);  
         }
 
         private static QueryContainer SearchQuery(QueryContainerDescriptor<Meme> q, string searchWord, Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
@@ -167,7 +169,7 @@ namespace MemeSearch.Logic.Services
             var type = TextQueryType.BestFields;
 
             searchWord = searchWord.Trim();
-            if (searchWord.StartsWith('"') && searchWord.EndsWith('"'))
+            if (IsPhrase(searchWord))
             {
                 type = TextQueryType.Phrase;
             }
@@ -178,6 +180,36 @@ namespace MemeSearch.Logic.Services
                     .Type(type)
                     .Lenient());
         }
+        #endregion
+
+        #region Highlight
+        private static QueryContainer HighlightSearch(QueryContainerDescriptor<Meme> q, string query)
+        {
+            var sb = new StringBuilder(query);
+
+            sb.Replace("AND", string.Empty);
+            sb.Replace("OR", string.Empty);
+            sb.Replace("(", string.Empty);
+            sb.Replace(")", string.Empty);
+
+            var clean = Regex.Replace(sb.ToString(), "\"(.*?)\"", m => m.Value.Replace(" ", "&nbsp;"));
+
+            var parts = clean.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            return q.Bool(m => m.Should(parts.Select(p => GetHighlightCondition(q, p.Replace("&nbsp;", " "))).ToArray()).MinimumShouldMatch(1));
+        }
+
+        private static QueryContainer GetHighlightCondition(QueryContainerDescriptor<Meme> q, string searchWord)
+        {
+            return IsPhrase(searchWord) 
+                ? q.MatchPhrase(c => c
+                    .Field(p => p.Content)
+                    .Analyzer("standard")
+                    .Query(searchWord.Trim('"'))
+                    .Slop(2))
+                : q.Term(t => t.Content, searchWord);
+        }
+        #endregion
 
         #region Fields
         private static IPromise<Fields> GetAllSearchableFields(FieldsDescriptor<Meme> f)
@@ -188,10 +220,7 @@ namespace MemeSearch.Logic.Services
                     .Field(fl => fl.Details);
         }
 
-        private static IPromise<Fields> GetHighlightFields(FieldsDescriptor<Meme> f)
-        {
-            return f.Field(fl => fl.Category);
-        }
+        private static bool IsPhrase(string searchWord) => searchWord.StartsWith('"') && searchWord.EndsWith('"');
         #endregion
     }
 }

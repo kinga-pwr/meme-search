@@ -25,15 +25,18 @@ namespace MemeSearch.API.Extensions
 
             services.AddSingleton<IElasticClient>(client);
 
-            if (!client.Indices.Exists(configuration["Elasticsearch:Index"]).Exists
-                && File.Exists("memes.json"))
+            if (!client.Indices.Exists(configuration["Elasticsearch:Index"]).Exists)
             {
                 client.Indices.Create(configuration["Elasticsearch:Index"], c => c.Map<Meme>(m => m.AutoMap()));
-                var lines = File.ReadAllLines("memes.json");
-                foreach (var line in lines)
+
+                if (File.Exists("memes.json"))
                 {
-                    var meme = JsonConvert.DeserializeObject<Meme>(line);
-                    client.IndexDocument(meme);
+                    var lines = File.ReadAllLines("memes.json");
+                    foreach (var line in lines)
+                    {
+                        var meme = JsonConvert.DeserializeObject<Meme>(line);
+                        client.IndexDocument(meme);
+                    }
                 }
             };
         }
