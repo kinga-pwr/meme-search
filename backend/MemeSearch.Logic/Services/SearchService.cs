@@ -18,20 +18,49 @@ namespace MemeSearch.Logic.Services
             _elasticClient = elasticClient;
         }
 
-        public IEnumerable<Meme> Search(string query, int start = 0)
+        public IEnumerable<Meme> StandardSearch(string query, int start = 0)
         {
-            if (string.IsNullOrWhiteSpace(query)) return null;
+            return Search(GetStandardQuery, query, new SearchParameters(), start);
+        }
 
-            var result = _elasticClient.Search<Meme>(s => 
+        public IEnumerable<Meme> AdvancedSearch(SearchParameters parameters, string query, int start = 0)
+        {
+            return Search(GetAdvancedQuery, query, parameters, start);
+        }
+
+        private static QueryContainer GetStandardQuery(QueryContainerDescriptor<Meme> q, string query, SearchParameters parameters)
+        {
+            return ParseQuery(q, query, parameters.Fields);
+        }
+
+        private static QueryContainer GetAdvancedQuery(QueryContainerDescriptor<Meme> q, string query, SearchParameters parameters)
+        {
+            var queryParts = new List<QueryContainer>
+            {
+                ParseQuery(q, query, parameters.Fields)
+            };
+
+            if (parameters.Status != null)
+            {
+                queryParts.Add(q.Term(t => t.Status, parameters.Status));
+            }
+
+            return q.Bool(b => b.Must(queryParts.ToArray()));
+        }
+
+        private IEnumerable<Meme> Search(Func<QueryContainerDescriptor<Meme>, string, SearchParameters, QueryContainer> getQuery, 
+            string query, SearchParameters parameters, int start)
+        {
+            var result = _elasticClient.Search<Meme>(s =>
                 s.From(start)
                 .Size(20)
                 .TrackScores(true)
-                .Query(q => ParseQuery(q, query, GetAllSearchableFields))
+                .Query(q => getQuery(q, query, parameters))
                 .Highlight(h => h
                     .PreTags("<highlight>")
                     .PostTags("</highlight>")
                     .Encoder(HighlighterEncoder.Html)
-                    .HighlightQuery(q => HighlightSearch(q, query))
+                    .HighlightQuery(q => HighlightSearch(q, query, parameters))
                     .Fields(f => f.Field(fl => fl.Content)
                                     .Type("plain")
                                     .ForceSource()
@@ -48,26 +77,15 @@ namespace MemeSearch.Logic.Services
             });
         }
 
-        public IEnumerable<Meme> AdvancedSearch()
-        {
-            // todo: finish this
-            return _elasticClient.Search<Meme>(s =>
-                s.Query(q => q.DateRange(d => d.Field(f => f.Year)
-                            .GreaterThanOrEquals(new DateTime())
-                            .LessThanOrEquals(new DateTime())))
-                .Sort(sort => sort.Descending(SortSpecialField.Score)))
-                .Documents;
-        }
-
         #region MainQuery
         private static QueryContainer ParseQuery(QueryContainerDescriptor<Meme> q, string query,
-            Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
+            string[] fields)
         {
-            return ParseExpression(q, query, 0, getSearchFields).container;
+            return ParseExpression(q, query, 0, fields).container;
         }
         
         private static (QueryContainer container, int position) ParseExpression(QueryContainerDescriptor<Meme> q, string query,
-            int position, Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
+            int position, string[] fields)
         {
             var executionStack = new Stack<QueryContainer>();
             var lastOperator = "";
@@ -80,7 +98,7 @@ namespace MemeSearch.Logic.Services
                 {
                     case '"':
                         var expression = ReadExactExpression(query, i);
-                        executionStack.Push(SearchQuery(q, expression, getSearchFields));
+                        executionStack.Push(SearchQuery(q, expression, fields));
                         i += expression.Length;
                         break;
                     
@@ -88,7 +106,7 @@ namespace MemeSearch.Logic.Services
                         return CalculateFinalResult();
                     
                     case '(':
-                        var subExpression = ParseExpression(q, query, i + 1, getSearchFields);
+                        var subExpression = ParseExpression(q, query, i + 1, fields);
                         executionStack.Push(subExpression.container);
                         i = subExpression.position;
                         break;
@@ -114,7 +132,7 @@ namespace MemeSearch.Logic.Services
             {
                 if (currentWord.Length > 0)
                 {
-                    executionStack.Push(SearchQuery(q, currentWord.ToString(), getSearchFields));
+                    executionStack.Push(SearchQuery(q, currentWord.ToString(), fields));
                 }
 
                 if (executionStack.Count > 1)
@@ -135,7 +153,7 @@ namespace MemeSearch.Logic.Services
             {
                 if (currentWord.Length > 0)
                 {
-                    executionStack.Push(SearchQuery(q, currentWord.ToString(), getSearchFields));
+                    executionStack.Push(SearchQuery(q, currentWord.ToString(), fields));
                 }
 
                 if (!string.IsNullOrEmpty(lastOperator) && lastOperator != operatorName)
@@ -164,7 +182,7 @@ namespace MemeSearch.Logic.Services
             return query.Substring(position, endOfExpression - position + 1);  
         }
 
-        private static QueryContainer SearchQuery(QueryContainerDescriptor<Meme> q, string searchWord, Func<FieldsDescriptor<Meme>, IPromise<Fields>> getSearchFields)
+        private static QueryContainer SearchQuery(QueryContainerDescriptor<Meme> q, string searchWord, string[] fields)
         {
             var type = TextQueryType.BestFields;
 
@@ -175,7 +193,7 @@ namespace MemeSearch.Logic.Services
             }
 
             return q.MultiMatch(mm => 
-                    mm.Fields(f => getSearchFields(f))
+                    mm.Fields(f => GetSearchableFields(f, fields))
                     .Query(searchWord)
                     .Type(type)
                     .Lenient());
@@ -183,8 +201,10 @@ namespace MemeSearch.Logic.Services
         #endregion
 
         #region Highlight
-        private static QueryContainer HighlightSearch(QueryContainerDescriptor<Meme> q, string query)
+        private static QueryContainer HighlightSearch(QueryContainerDescriptor<Meme> q, string query, SearchParameters parameters)
         {
+            if (!parameters.Fields.Contains("Content")) return new QueryContainer();
+
             var sb = new StringBuilder(query);
 
             sb.Replace("AND", string.Empty);
@@ -212,12 +232,25 @@ namespace MemeSearch.Logic.Services
         #endregion
 
         #region Fields
-        private static IPromise<Fields> GetAllSearchableFields(FieldsDescriptor<Meme> f)
+        private static IPromise<Fields> GetSearchableFields(FieldsDescriptor<Meme> f, string[] fields)
         {
-            return f.Field(fl => fl.Title)
-                    .Field(fl => fl.Content)
-                    .Field(fl => fl.Category)
-                    .Field(fl => fl.Details);
+            if (fields.Contains("Title"))
+            {
+                f = f.Field(fl => fl.Title);
+            }
+            if (fields.Contains("Content"))
+            {
+                f = f.Field(fl => fl.Content);
+            }
+            if (fields.Contains("Category"))
+            {
+                f = f.Field(fl => fl.Category);
+            }
+            if (fields.Contains("Details"))
+            {
+                f = f.Field(fl => fl.Details);
+            }
+            return f;
         }
 
         private static bool IsPhrase(string searchWord) => searchWord.StartsWith('"') && searchWord.EndsWith('"');
