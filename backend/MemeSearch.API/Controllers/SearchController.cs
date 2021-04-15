@@ -18,7 +18,7 @@ namespace MemeSearch.API.Controllers
         [HttpGet("IsAlive")]
         public IActionResult IsAlive()
         {
-            return Ok("MemeSearch is running");
+            return Ok("MemeSearch is running...");
         }
 
         [HttpGet("Search/{query}")]

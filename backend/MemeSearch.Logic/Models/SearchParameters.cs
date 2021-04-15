@@ -8,6 +8,6 @@
 
         public int? YearTo { get; set; }
 
-        public string[] Fields { get; set; } = { "Title", "Content", "Category", "Details" };
+        public string[] Fields { get; set; } = { "Title", "Content", "Category", "Details", "Image" };
     }
 }

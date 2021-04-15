@@ -35,14 +35,24 @@ namespace MemeSearch.Logic.Services
 
         private static QueryContainer GetAdvancedQuery(QueryContainerDescriptor<Meme> q, string query, SearchParameters parameters)
         {
+            // TEXT QUERY (with logic) - TITLE, CONTENT, CATEGORY, DETAILS AND IMAGE
             var queryParts = new List<QueryContainer>
             {
                 ParseQuery(q, query, parameters.Fields)
             };
 
+            // STATUS
             if (parameters.Status != null)
             {
                 queryParts.Add(q.Term(t => t.Status, parameters.Status));
+            }
+
+            // YEAR FROM AND TO
+            if (parameters.YearFrom.HasValue || parameters.YearTo.HasValue)
+            {
+                queryParts.Add(q.Range(r => r.Field(p => p.Year)
+                .GreaterThanOrEquals(parameters.YearFrom ?? int.MinValue)
+                .LessThanOrEquals(parameters.YearTo ?? int.MaxValue)));
             }
 
             return q.Bool(b => b.Must(queryParts.ToArray()));
@@ -184,19 +194,28 @@ namespace MemeSearch.Logic.Services
 
         private static QueryContainer SearchQuery(QueryContainerDescriptor<Meme> q, string searchWord, string[] fields)
         {
-            var type = TextQueryType.BestFields;
-
             searchWord = searchWord.Trim();
+
+            var result = new List<QueryContainer>();
+
+            var type = TextQueryType.BestFields;
             if (IsPhrase(searchWord))
             {
                 type = TextQueryType.Phrase;
             }
 
-            return q.MultiMatch(mm => 
-                    mm.Fields(f => GetSearchableFields(f, fields))
+            if (fields.Contains("Content") || fields.Contains("Category")
+                || fields.Contains("Image"))
+            {
+                result.Add(q.MultiMatch(mm =>
+                    mm.Fields(f => GetTextFields(f, fields))
                     .Query(searchWord)
-                    .Type(type)
-                    .Lenient());
+                    .Type(type)));
+            }
+
+            AppendKeywordFields(q, fields, searchWord, result);
+
+            return q.Bool(b => b.Should(result.ToArray()).MinimumShouldMatch(1));
         }
         #endregion
 
@@ -232,12 +251,16 @@ namespace MemeSearch.Logic.Services
         #endregion
 
         #region Fields
-        private static IPromise<Fields> GetSearchableFields(FieldsDescriptor<Meme> f, string[] fields)
+        private static void AppendKeywordFields(QueryContainerDescriptor<Meme> q, string[] fields, string searchWord, List<QueryContainer> result)
         {
             if (fields.Contains("Title"))
             {
-                f = f.Field(fl => fl.Title);
+                result.Add(q.Wildcard(t => t.Title, $"*{searchWord}*"));
             }
+        }
+
+        private static IPromise<Fields> GetTextFields(FieldsDescriptor<Meme> f, string[] fields)
+        {
             if (fields.Contains("Content"))
             {
                 f = f.Field(fl => fl.Content);
@@ -248,7 +271,11 @@ namespace MemeSearch.Logic.Services
             }
             if (fields.Contains("Details"))
             {
-                f = f.Field(fl => fl.Details);
+                f = f.Field(fl => fl.Category);
+            }
+            if (fields.Contains("Image"))
+            {
+                f = f.Field(fl => fl.ImageTags);
             }
             return f;
         }

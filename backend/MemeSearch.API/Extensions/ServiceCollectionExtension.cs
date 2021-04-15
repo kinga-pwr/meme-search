@@ -27,7 +27,17 @@ namespace MemeSearch.API.Extensions
 
             if (!client.Indices.Exists(configuration["Elasticsearch:Index"]).Exists)
             {
-                client.Indices.Create(configuration["Elasticsearch:Index"], c => c.Map<Meme>(m => m.AutoMap()));
+                client.Indices.Create(configuration["Elasticsearch:Index"], c =>
+                c.Settings(s => s
+                    .Analysis(a => a
+                        .Analyzers(an => an
+                            .Custom("keywords", ca => ca
+                                .Tokenizer("standard")
+                                .Filters("lowercase")
+                            )
+                        )
+                    ))
+                .Map<Meme>(m => m.AutoMap()));
 
                 if (File.Exists("memes.json"))
                 {

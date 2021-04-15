@@ -5,7 +5,7 @@ namespace MemeSearch.Logic.Models
     [ElasticsearchType(RelationName = "meme")]
     public class Meme
     {
-        [Keyword]
+        [Keyword(Normalizer= "keywords")]
         public string Title { get; set; }
 
         [Text]
@@ -17,16 +17,19 @@ namespace MemeSearch.Logic.Models
         [Text]
         public string ImageTags { get; set; }
 
-        [Keyword]
+        [Text]
+        public string ImageTagsFull { get; set; }
+
+        [Keyword(Normalizer = "keywords")]
         public string Status { get; set; }
 
-        [Keyword]
+        [Text]
         public string Details { get; set; }
 
-        [Date(Format = "yyyy")]
+        [Number]
         public int Year { get; set; }
 
-        [Keyword]
+        [Text]
         public string Category { get; set; }
         
         [Text]
