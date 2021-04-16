@@ -4,15 +4,15 @@ namespace MemeSearch.Logic.Helpers
 {
     public static class ValidationHelper
     {
-        public static bool ValidateSearch(string query, int page, out string message)
+        public static bool ValidateSearch(string query, int results, int page, out string message)
         {
-            return ValidateQuery(query, out message) && ValidatePage(page, out message);
+            return ValidateQuery(query, out message) && ValidatePagination(results, page, out message);
         }
 
-        public static bool ValidateAdvancedSearch(string query, SearchParameters parameters, int page, out string message)
+        public static bool ValidateAdvancedSearch(string query, SearchParameters parameters, int results, int page, out string message)
         {
             return ValidateQuery(query, out message)
-                && ValidatePage(page, out message)
+                && ValidatePagination(results, page, out message)
                 && ValidateAdvancedSearchParams(parameters, out message);
         }
 
@@ -27,11 +27,12 @@ namespace MemeSearch.Logic.Helpers
             return true;
         }
 
-        private static bool ValidatePage(int page, out string message)
+        private static bool ValidatePagination(int results, int page, out string message)
         {
             message = string.Empty;
 
             if (page < 0) message = "Page cannot be less than 0";
+            if (results < 0) message = "Results cannot be less than 0";
 
             return true;
         }

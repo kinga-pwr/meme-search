@@ -22,25 +22,25 @@ namespace MemeSearch.API.Controllers
         }
 
         [HttpGet("Search/{query}")]
-        public IActionResult Search(string query, int start = 0)
+        public IActionResult Search(string query, int results = 20, int start = 0)
         {
-            if (!ValidationHelper.ValidateSearch(query, start, out string message))
+            if (!ValidationHelper.ValidateSearch(query, results, start, out string message))
             {
                 return BadRequest(message);
             }
 
-            return Ok(_searchService.StandardSearch(query, start));
+            return Ok(_searchService.StandardSearch(query, results, start));
         }
 
         [HttpPost("AdvancedSearch/{query}")]
-        public IActionResult AdvancedSearch(string query, [FromBody]SearchParameters parameters, int start = 0)
+        public IActionResult AdvancedSearch(string query, [FromBody]SearchParameters parameters, int results = 20, int start = 0)
         {
-            if (!ValidationHelper.ValidateAdvancedSearch(query, parameters, start, out string message))
+            if (!ValidationHelper.ValidateAdvancedSearch(query, parameters, results, start, out string message))
             {
                 return BadRequest(message);
             }
 
-            return Ok(_searchService.AdvancedSearch(parameters, query, start));
+            return Ok(_searchService.AdvancedSearch(parameters, query, results, start));
         }
     }
 }

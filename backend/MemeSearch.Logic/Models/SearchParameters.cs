@@ -9,5 +9,9 @@
         public int? YearTo { get; set; }
 
         public string[] Fields { get; set; } = { "Title", "Content", "Category", "Details", "Image" };
+
+        public string Sort { get; set; }
+
+        public bool SortAsc { get; set; }
     }
 }

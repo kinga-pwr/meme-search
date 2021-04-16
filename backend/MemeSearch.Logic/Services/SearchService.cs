@@ -4,6 +4,7 @@ using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -18,14 +19,14 @@ namespace MemeSearch.Logic.Services
             _elasticClient = elasticClient;
         }
 
-        public IEnumerable<Meme> StandardSearch(string query, int start = 0)
+        public IEnumerable<Meme> StandardSearch(string query, int results, int start)
         {
-            return Search(GetStandardQuery, query, new SearchParameters(), start);
+            return Search(GetStandardQuery, query, new SearchParameters(), results, start);
         }
 
-        public IEnumerable<Meme> AdvancedSearch(SearchParameters parameters, string query, int start = 0)
+        public IEnumerable<Meme> AdvancedSearch(SearchParameters parameters, string query, int results, int start)
         {
-            return Search(GetAdvancedQuery, query, parameters, start);
+            return Search(GetAdvancedQuery, query, parameters, results, start);
         }
 
         private static QueryContainer GetStandardQuery(QueryContainerDescriptor<Meme> q, string query, SearchParameters parameters)
@@ -58,12 +59,14 @@ namespace MemeSearch.Logic.Services
             return q.Bool(b => b.Must(queryParts.ToArray()));
         }
 
+        #region Search
         private IEnumerable<Meme> Search(Func<QueryContainerDescriptor<Meme>, string, SearchParameters, QueryContainer> getQuery, 
-            string query, SearchParameters parameters, int start)
+            string query, SearchParameters parameters, int results, int start)
         {
+
             var result = _elasticClient.Search<Meme>(s =>
                 s.From(start)
-                .Size(20)
+                .Size(results)
                 .TrackScores(true)
                 .Query(q => getQuery(q, query, parameters))
                 .Highlight(h => h
@@ -78,7 +81,7 @@ namespace MemeSearch.Logic.Services
                                     .Fragmenter(HighlighterFragmenter.Span)
                                     .NumberOfFragments(3)
                                     .NoMatchSize(150)))
-                .Sort(sort => sort.Descending(SortSpecialField.Score)));
+                .Sort(s => GetSorting(s, parameters.Sort, parameters.SortAsc)));
 
             return result.Documents.Select((d, idx) =>
             {
@@ -86,6 +89,17 @@ namespace MemeSearch.Logic.Services
                 return d;
             });
         }
+
+        private static IPromise<IList<ISort>> GetSorting(SortDescriptor<Meme> s, string sort, bool sortAsc)
+        {
+            if (sort != null)
+            {
+                return s.Field(f => f.Year, sortAsc ? SortOrder.Ascending : SortOrder.Descending);
+            }
+
+            return s.Descending(SortSpecialField.Score);
+        }
+        #endregion Search
 
         #region MainQuery
         private static QueryContainer ParseQuery(QueryContainerDescriptor<Meme> q, string query,
@@ -204,8 +218,7 @@ namespace MemeSearch.Logic.Services
                 type = TextQueryType.Phrase;
             }
 
-            if (fields.Contains("Content") || fields.Contains("Category")
-                || fields.Contains("Image"))
+            if (fields.Any(f => SearchableTextFields.Contains(f)))
             {
                 result.Add(q.MultiMatch(mm =>
                     mm.Fields(f => GetTextFields(f, fields))
@@ -251,6 +264,8 @@ namespace MemeSearch.Logic.Services
         #endregion
 
         #region Fields
+        private static readonly List<string> SearchableTextFields = new List<string>() { "Content", "Category", "Details", "ImageTags" };
+
         private static void AppendKeywordFields(QueryContainerDescriptor<Meme> q, string[] fields, string searchWord, List<QueryContainer> result)
         {
             if (fields.Contains("Title"))
@@ -261,23 +276,24 @@ namespace MemeSearch.Logic.Services
 
         private static IPromise<Fields> GetTextFields(FieldsDescriptor<Meme> f, string[] fields)
         {
-            if (fields.Contains("Content"))
+            foreach (var field in fields.Where(f => SearchableTextFields.Contains(f)))
             {
-                f = f.Field(fl => fl.Content);
-            }
-            if (fields.Contains("Category"))
-            {
-                f = f.Field(fl => fl.Category);
-            }
-            if (fields.Contains("Details"))
-            {
-                f = f.Field(fl => fl.Category);
-            }
-            if (fields.Contains("Image"))
-            {
-                f = f.Field(fl => fl.ImageTags);
+                f = f.Field(GetField(field));
             }
             return f;
+        }
+
+        private static Expression<Func<Meme, string>> GetField(string name)
+        {
+            return name switch
+            {
+                "Title" => f => f.Title,
+                "Content" => f => f.Content,
+                "Category" => f => f.Category,
+                "Details" => f => f.Details,
+                "Image" => f => f.ImageTags,
+                _ => null,
+            };
         }
 
         private static bool IsPhrase(string searchWord) => searchWord.StartsWith('"') && searchWord.EndsWith('"');

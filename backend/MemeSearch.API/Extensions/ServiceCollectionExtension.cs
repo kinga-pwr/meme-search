@@ -32,7 +32,7 @@ namespace MemeSearch.API.Extensions
                     .Analysis(a => a
                         .Analyzers(an => an
                             .Custom("keywords", ca => ca
-                                .Tokenizer("standard")
+                                .Tokenizer("keyword")
                                 .Filters("lowercase")
                             )
                         )
