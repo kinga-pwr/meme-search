@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MemeSearch.API.Controllers
 {
-    [Route("api/Information")]
+    [Route("Information")]
     [ApiController]
     public class AdditionalInformationController : ControllerBase
     {

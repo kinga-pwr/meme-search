@@ -43,9 +43,21 @@ namespace MemeSearch.Logic.Services
             };
 
             // STATUS
-            if (parameters.Status != null)
+            if (parameters.Status?.Any() ?? false)
             {
-                queryParts.Add(q.Term(t => t.Status, parameters.Status));
+                queryParts.Add(q.Bool(f => f.Must(parameters.Status.Select(s => q.Term(t => t.Status, s)).ToArray())));
+            }
+
+            // CATEGORY
+            if (parameters.Category?.Any() ?? false)
+            {
+                queryParts.Add(q.Bool(f => f.Should(parameters.Category.Select(c => q.Match(m => m.Field(f => f.Category).Query(c))).ToArray()).MinimumShouldMatch(1)));
+            }
+
+            // DETAILS
+            if (parameters.Details?.Any() ?? false)
+            {
+                queryParts.Add(q.Bool(f => f.Should(parameters.Details.Select(d => q.Match(m => m.Field(f => f.Details).Query(d))).ToArray()).MinimumShouldMatch(1)));
             }
 
             // YEAR FROM AND TO
@@ -103,13 +115,13 @@ namespace MemeSearch.Logic.Services
 
         #region MainQuery
         private static QueryContainer ParseQuery(QueryContainerDescriptor<Meme> q, string query,
-            string[] fields)
+            IEnumerable<string> fields)
         {
             return ParseExpression(q, query, 0, fields).container;
         }
         
         private static (QueryContainer container, int position) ParseExpression(QueryContainerDescriptor<Meme> q, string query,
-            int position, string[] fields)
+            int position, IEnumerable<string> fields)
         {
             var executionStack = new Stack<QueryContainer>();
             var lastOperator = "";
@@ -206,7 +218,7 @@ namespace MemeSearch.Logic.Services
             return query.Substring(position, endOfExpression - position + 1);  
         }
 
-        private static QueryContainer SearchQuery(QueryContainerDescriptor<Meme> q, string searchWord, string[] fields)
+        private static QueryContainer SearchQuery(QueryContainerDescriptor<Meme> q, string searchWord, IEnumerable<string> fields)
         {
             searchWord = searchWord.Trim();
 
@@ -266,7 +278,7 @@ namespace MemeSearch.Logic.Services
         #region Fields
         private static readonly List<string> SearchableTextFields = new List<string>() { "Content", "Category", "Details", "ImageTags" };
 
-        private static void AppendKeywordFields(QueryContainerDescriptor<Meme> q, string[] fields, string searchWord, List<QueryContainer> result)
+        private static void AppendKeywordFields(QueryContainerDescriptor<Meme> q, IEnumerable<string> fields, string searchWord, List<QueryContainer> result)
         {
             if (fields.Contains("Title"))
             {
@@ -274,7 +286,7 @@ namespace MemeSearch.Logic.Services
             }
         }
 
-        private static IPromise<Fields> GetTextFields(FieldsDescriptor<Meme> f, string[] fields)
+        private static IPromise<Fields> GetTextFields(FieldsDescriptor<Meme> f, IEnumerable<string> fields)
         {
             foreach (var field in fields.Where(f => SearchableTextFields.Contains(f)))
             {
