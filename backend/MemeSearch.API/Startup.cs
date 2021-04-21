@@ -43,6 +43,7 @@ namespace MemeSearch.API
 
             services.SetSearchEngine(Configuration);
             services.AddTransient<ISearchService, SearchService>();
+            services.AddSingleton<IAdditionalInformationService, AdditionalInformationService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
