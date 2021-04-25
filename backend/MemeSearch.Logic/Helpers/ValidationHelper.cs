@@ -26,6 +26,16 @@ namespace MemeSearch.Logic.Helpers
             return message.Length == 0;
         }
 
+        public static bool ValidateImageSearch(ImageSearchParameters parameters, int results, int page, out string message)
+        {
+            var messages = new StringBuilder();
+            ValidatePagination(results, page, messages);
+            ValidateImageSearchParams(parameters, messages);
+            ValidateAdvancedSearchParams(parameters, messages);
+            message = messages.ToString();
+            return message.Length == 0;
+        }
+
 
         // todo: finish
         private static void ValidateQuery(string query, StringBuilder message)
@@ -61,6 +71,11 @@ namespace MemeSearch.Logic.Helpers
             if (!parameters.Fields.All(f => _validSearchFields.Contains(f))) message.AppendLine("Invalid Fields list. Valid options are: " + string.Join(", ", _validSearchFields));
             if (parameters.Sort != null && !_validSortFields.Contains(parameters.Sort))message.AppendLine("Invalid Sort. Valid options are: " + string.Join(", ", _validSortFields));
             if (parameters.YearFrom.HasValue && parameters.YearTo.HasValue && parameters.YearFrom.Value > parameters.YearTo.Value) message.AppendLine("YearFrom cannot be greater than YearTo");
+        }
+
+        private static void ValidateImageSearchParams(ImageSearchParameters parameters, StringBuilder message)
+        {
+            if (string.IsNullOrWhiteSpace(parameters.Url)) message.AppendLine("Image url cannot be empty");
         }
     }
 }

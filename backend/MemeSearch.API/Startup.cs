@@ -42,6 +42,7 @@ namespace MemeSearch.API
             });
 
             services.SetSearchEngine(Configuration);
+            services.SetImageDetector(Configuration);
             services.AddTransient<ISearchService, SearchService>();
             services.AddSingleton<IAdditionalInformationService, AdditionalInformationService>();
         }

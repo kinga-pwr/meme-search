@@ -2,6 +2,8 @@
 using MemeSearch.Logic.Interfaces;
 using MemeSearch.Logic.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Net;
 
 namespace MemeSearch.API.Controllers
 {
@@ -41,6 +43,25 @@ namespace MemeSearch.API.Controllers
             }
 
             return Ok(_searchService.AdvancedSearch(parameters, query, results, start));
+        }
+
+        [HttpPost("ImageSearch")]
+        public IActionResult ImageSearch([FromBody] ImageSearchParameters parameters, int results = 20, int start = 0)
+        {
+            if (!_searchService.CanImageSearch())
+            {
+                return StatusCode((int)HttpStatusCode.ServiceUnavailable);
+            }
+
+            parameters.Fields = new List<string> { "Image" };
+
+            if (!ValidationHelper.ValidateImageSearch(parameters, results, start, out string message))
+            {
+                return BadRequest(message);
+            }
+
+            var result = _searchService.ImageSearch(parameters, results, start);
+            return result != null ? Ok(result) : StatusCode((int)HttpStatusCode.ServiceUnavailable);
         }
     }
 }

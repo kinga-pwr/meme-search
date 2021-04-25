@@ -13,10 +13,12 @@ namespace MemeSearch.Logic.Services
     public class SearchService : ISearchService
     {
         private readonly IElasticClient _elasticClient;
+        private readonly IImageDetectService _imageDetectService;
 
-        public SearchService(IElasticClient elasticClient)
+        public SearchService(IElasticClient elasticClient, IImageDetectService imageDetectService)
         {
             _elasticClient = elasticClient;
+            _imageDetectService = imageDetectService;
         }
 
         public IEnumerable<Meme> StandardSearch(string query, int results, int start)
@@ -28,6 +30,23 @@ namespace MemeSearch.Logic.Services
         {
             return Search(GetAdvancedQuery, query, parameters, results, start);
         }
+
+        public IEnumerable<Meme> ImageSearch(ImageSearchParameters parameters, int results, int start)
+        {
+            var imageTags = _imageDetectService.GetImageTags(parameters.Url).Result;
+            
+            if (imageTags == null) return null;
+            if (string.IsNullOrWhiteSpace(imageTags)) return Enumerable.Empty<Meme>();
+
+            if (!parameters.SearchSimilarities)
+            {
+                imageTags = $"\"{imageTags.Replace(" AND ", " ")}\"";
+            }
+
+            return Search(GetAdvancedQuery, imageTags, parameters, results, start);
+        }
+
+        public bool CanImageSearch() => _imageDetectService.IsAvailable;
 
         private static QueryContainer GetStandardQuery(QueryContainerDescriptor<Meme> q, string query, SearchParameters parameters)
         {
@@ -276,7 +295,7 @@ namespace MemeSearch.Logic.Services
         #endregion
 
         #region Fields
-        private static readonly List<string> SearchableTextFields = new List<string>() { "Content", "Category", "Details", "ImageTags" };
+        private static readonly List<string> SearchableTextFields = new List<string>() { "Content", "Category", "Details", "Image" };
 
         private static void AppendKeywordFields(QueryContainerDescriptor<Meme> q, IEnumerable<string> fields, string searchWord, List<QueryContainer> result)
         {

@@ -1,5 +1,7 @@
 ﻿using MemeSearch.Logic.Consts;
+using MemeSearch.Logic.Interfaces;
 using MemeSearch.Logic.Models;
+using MemeSearch.Logic.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
@@ -67,6 +69,12 @@ namespace MemeSearch.API.Extensions
                     Log.Warning("Meme documents not present to be indexed. Index will be empty!");
                 }
             };
+        }
+
+        public static void SetImageDetector(this IServiceCollection services, IConfiguration configuration)
+        {
+            var imageDetectService = new ImageDetectService(configuration["DeepDetect:Url"], configuration["DeepDetect:TaggerName"]);
+            services.AddSingleton<IImageDetectService>(imageDetectService);
         }
     }
 }

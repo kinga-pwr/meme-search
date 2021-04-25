@@ -1,0 +1,15 @@
+{
+  "mllib": "caffe",
+  "description": "image classification service",
+  "type": "supervised",
+  "parameters": {
+    "input": {
+      "connector": "image"
+    }
+  },
+  "model": {
+    "repository": "/opt/models/detection_600",
+    "create_repository": true,
+    "init": "https://deepdetect.com/models/init/desktop/images/detection/detection_600.tar.gz"
+  }
+}
