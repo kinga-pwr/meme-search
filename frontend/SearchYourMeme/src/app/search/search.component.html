@@ -1,0 +1,17 @@
+<div style="margin-top: 20em;">
+
+    <form id="search-form">
+        <div class="search">
+            <input type="text"
+                   name="search"
+                   placeholder="Search..."
+                   class="round"
+                   [(ngModel)]="searchBox" />
+
+            <input type="button"
+                   class="corner"
+                   (click)="Search()"
+                   value="🔍" />
+        </div>
+    </form>
+</div>

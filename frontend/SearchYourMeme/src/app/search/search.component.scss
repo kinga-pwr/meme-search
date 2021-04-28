@@ -1,0 +1,30 @@
+.round {
+    width: 100%;
+    border-radius: 150px;
+    border: 1px #000 solid;
+    padding: 5px 5px 5px 25px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    height: inherit;
+}
+
+.corner {
+    position: absolute;
+    top: 11px;
+    right: -23px;
+    height: 20px;
+    width: 35px;
+    z-index: 10;
+    border-radius: 10px;
+    border: none;
+    background: rgba(0, 0, 0, 0.281); /* Set the bg image here. with "no-repeat" */
+}
+
+.search {
+    position: relative;
+    width: 350px;
+    height: 30px;
+}
+
