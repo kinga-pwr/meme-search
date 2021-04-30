@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+    front:
+        build: 
+            context: ./frontend/SearchYourMeme
+        ports:
+            - "8080:8080"
+        depends_on:
+            - back
+            - elastic
+            - deepdetect
+            
+    back:
+        build: 
+            context: ./backend
+        ports:
+            - "5000:5000"
+        depends_on:
+            - elastic
+            - deepdetect
+    
+    elastic:
+        image: "docker.elastic.co/elasticsearch/elasticsearch:7.12.1"
+    
+    deepdetect:
+        image: "jolibrain/deepdetect_cpu"
+    
+

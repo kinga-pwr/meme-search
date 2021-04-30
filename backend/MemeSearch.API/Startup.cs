@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -41,6 +40,7 @@ namespace MemeSearch.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MemeSearch.API", Version = "v1" });
             });
 
+            services.SetHttpClient(Configuration);
             services.SetSearchEngine(Configuration);
             services.SetImageDetector(Configuration);
             services.AddTransient<ISearchService, SearchService>();
@@ -49,12 +49,9 @@ namespace MemeSearch.API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MemeSearch.API v1"));
-            }
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MemeSearch.API v1"));
 
             app.UseCors("AllowAll");
 
@@ -66,6 +63,8 @@ namespace MemeSearch.API
             {
                 endpoints.MapControllers();
             });
+
+            app.ApplicationServices.GetService<IImageDetectService>();
         }
     }
 }

@@ -6,16 +6,32 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using Newtonsoft.Json;
+using Polly;
 using Serilog;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace MemeSearch.API.Extensions
 {
     public static class ServiceCollectionExtension
     {
+        public static void SetHttpClient(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHttpClient<IMemeSearchHttpService, MemeSearchHttpService>()
+                .AddTransientHttpErrorPolicy(
+                    p => p.WaitAndRetryAsync(new[]
+                    {
+                        TimeSpan.FromSeconds(1),
+                        TimeSpan.FromSeconds(5),
+                        TimeSpan.FromSeconds(10)
+                    }));
+        }
+
         public static void SetSearchEngine(this IServiceCollection services, IConfiguration configuration)
         {
+            Thread.Sleep(10000);
+
             var connectionSettings = new ConnectionSettings(new Uri(configuration["Elasticsearch:Url"]))
                 .DefaultIndex(configuration["Elasticsearch:Index"]);
 
@@ -73,8 +89,8 @@ namespace MemeSearch.API.Extensions
 
         public static void SetImageDetector(this IServiceCollection services, IConfiguration configuration)
         {
-            var imageDetectService = new ImageDetectService(configuration["DeepDetect:Url"], configuration["DeepDetect:TaggerName"]);
-            services.AddSingleton<IImageDetectService>(imageDetectService);
+            services.Configure<DeepDetect>(configuration.GetSection("DeepDetect"));
+            services.AddSingleton<IImageDetectService, ImageDetectService>();
         }
     }
 }

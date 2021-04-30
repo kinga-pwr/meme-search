@@ -1,4 +1,6 @@
 ﻿using MemeSearch.Logic.Interfaces;
+using MemeSearch.Logic.Models;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Serilog;
 using System;
@@ -13,7 +15,7 @@ namespace MemeSearch.Logic.Services
 {
     public class ImageDetectService : IImageDetectService
     {
-        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly IMemeSearchHttpService _httpClient;
 
         public bool IsAvailable { get; private set; }
 
@@ -22,10 +24,12 @@ namespace MemeSearch.Logic.Services
         private string Url { get; }
         private string TaggerName { get; }
 
-        public ImageDetectService(string url, string taggerName)
+        public ImageDetectService(IOptions<DeepDetect> config, IMemeSearchHttpService httpClient)
         {
-            Url = url;
-            TaggerName = taggerName;
+            Url = config.Value.Url;
+            TaggerName = config.Value.TaggerName;
+
+            _httpClient = httpClient;
 
             var existingTaggerResponse = CheckIfTaggerExists().Result;
             if (existingTaggerResponse.HasValue && !existingTaggerResponse.Value)
@@ -38,7 +42,7 @@ namespace MemeSearch.Logic.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{Url}/services/{TaggerName}");
+                var response = await _httpClient.HttpClient.GetAsync($"{Url}/services/{TaggerName}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -71,7 +75,7 @@ namespace MemeSearch.Logic.Services
 
             try
             {
-                var response = await _httpClient.PutAsync($"{Url}/services/{TaggerName}", new StringContent(createTaggerConfig));
+                var response = await _httpClient.HttpClient.PutAsync($"{Url}/services/{TaggerName}", new StringContent(createTaggerConfig));
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -113,7 +117,7 @@ namespace MemeSearch.Logic.Services
 
             try
             {
-                var response = await _httpClient.PostAsync($"{Url}/predict", new StringContent(requestBody));
+                var response = await _httpClient.HttpClient.PostAsync($"{Url}/predict", new StringContent(requestBody));
 
                 if (response.IsSuccessStatusCode)
                 {
