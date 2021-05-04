@@ -34,9 +34,11 @@ namespace MemeSearch.API.Controllers
             return Ok(_searchService.StandardSearch(query, results, start));
         }
 
-        [HttpPost("AdvancedSearch/{query}")]
+        [HttpPost("AdvancedSearch")]
         public IActionResult AdvancedSearch(string query, [FromBody]SearchParameters parameters, int results = 20, int start = 0)
         {
+            if (query is null) query = string.Empty;
+
             if (!ValidationHelper.ValidateAdvancedSearch(query, parameters, results, start, out string message))
             {
                 return BadRequest(message);

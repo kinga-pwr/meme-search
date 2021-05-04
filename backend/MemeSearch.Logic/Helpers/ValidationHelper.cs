@@ -19,7 +19,7 @@ namespace MemeSearch.Logic.Helpers
         public static bool ValidateAdvancedSearch(string query, SearchParameters parameters, int results, int page, out string message)
         {
             var messages = new StringBuilder();
-            ValidateQuery(query, messages);
+            ValidateQuery(query, messages, true);
             ValidatePagination(results, page, messages);
             ValidateAdvancedSearchParams(parameters, messages);
             message = messages.ToString();
@@ -38,9 +38,9 @@ namespace MemeSearch.Logic.Helpers
 
 
         // todo: finish
-        private static void ValidateQuery(string query, StringBuilder message)
+        private static void ValidateQuery(string query, StringBuilder message, bool allowEmpty = false)
         {
-            if (string.IsNullOrWhiteSpace(query)) message.AppendLine("Empty query");
+            if (string.IsNullOrWhiteSpace(query) && !allowEmpty) message.AppendLine("Empty query");
 
             var brackets = 0;
             for (int i=0; i<query.Length; i++)

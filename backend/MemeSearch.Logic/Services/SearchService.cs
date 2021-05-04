@@ -55,11 +55,13 @@ namespace MemeSearch.Logic.Services
 
         private static QueryContainer GetAdvancedQuery(QueryContainerDescriptor<Meme> q, string query, SearchParameters parameters)
         {
-            // TEXT QUERY (with logic) - TITLE, CONTENT, CATEGORY, DETAILS AND IMAGE
-            var queryParts = new List<QueryContainer>
+            var queryParts = new List<QueryContainer>();
+
+            if (!string.IsNullOrEmpty(query))
             {
-                ParseQuery(q, query, parameters.Fields)
-            };
+                // TEXT QUERY (with logic) - TITLE, CONTENT, CATEGORY, DETAILS AND IMAGE
+                queryParts.Add(ParseQuery(q, query, parameters.Fields));
+            }
 
             // STATUS
             if (parameters.Status?.Any() ?? false)
