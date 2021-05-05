@@ -1,10 +1,10 @@
 <mat-drawer-container class="drawer-container" autosize>
     <mat-drawer #drawer class="sidenav" mode="side">
-        <ion-range dualKnobs="true" min="21" max="72" step="3" snaps="true" pin="true"></ion-range>
+        <app-filter></app-filter>
     </mat-drawer>
   
     <div fxLayout="column" fxLayoutAlign="center center">
-        <app-search></app-search>
+        <app-search [inputDrawer]="drawer"></app-search>
     </div>
 </mat-drawer-container>
 <router-outlet></router-outlet>

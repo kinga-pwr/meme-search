@@ -11,12 +11,14 @@ import { IonicModule } from '@ionic/angular';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
+import { FilterComponent } from './filter/filter.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    SearchComponent
+    SearchComponent,
+    FilterComponent
   ],
   imports: [
     AppRoutingModule,
