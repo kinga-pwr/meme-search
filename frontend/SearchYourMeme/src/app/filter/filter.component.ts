@@ -1,5 +1,4 @@
-import { ViewEncapsulation } from '@angular/core';
-import { Component, Input, OnInit, ViewChild, ɵsetCurrentInjector } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatChip, MatChipList } from '@angular/material/chips';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -25,6 +24,7 @@ export class FilterComponent implements OnInit {
   filteredSources!: Observable<string[]>;
 
   statusChips = ["Confirmed", "Submitted", "Deadpool"];
+  filters = ["Status: Confirmed", "Status: Submitted", "Status: Deadpool"];
 
   @ViewChild('chipList') 
   chipList!: MatChipList;
@@ -83,6 +83,12 @@ export class FilterComponent implements OnInit {
     }
 
     this.filterForm.controls.statuses.setValue(current);
+  }
+
+  Remove(filter: string)
+  {
+    var idx = this.filters.indexOf(filter);
+    this.filters.splice(idx, 1);
   }
 
   private _filter(name: any): any {
