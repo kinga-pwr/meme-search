@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import {MatButtonModule} from '@angular/material/button';
     FormsModule,
     MatSidenavModule,
     MatButtonModule,
+    MatIconModule,
     IonicModule.forRoot(),
   ],
   providers: [],

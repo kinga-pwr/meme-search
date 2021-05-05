@@ -1,16 +1,21 @@
 <div style="margin-top: 18em;">
-    <form id="search-form">
-        <div class="search">
-            <input type="text"
-                   name="search"
-                   placeholder="Search..."
-                   class="round"
-                   [(ngModel)]="searchBox" />
+    <div fxLayout="row" fxLayoutAlign="center center">
+        <form id="search-form">
+            <div class="search">
+                <input type="text"
+                    name="search"
+                    placeholder="Search..."
+                    class="round"
+                    [(ngModel)]="searchBox" />
 
-            <input type="button"
-                   class="corner"
-                   (click)="Search()"
-                   value="🔍" />
-        </div>
-    </form>
+                <input type="button"
+                    class="corner"
+                    (click)="Search()"
+                    value="🔍" />
+            </div>
+        </form>
+        <button mat-icon-button color="primary" (click)="Filter()" class="filter-btn">
+            <mat-icon>tune</mat-icon>
+        </button>
+    </div>
 </div>
