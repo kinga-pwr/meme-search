@@ -7,7 +7,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { SearchComponent } from './search/search.component';
 import { FormsModule } from '@angular/forms';
-
+import { IonicModule } from '@ionic/angular';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatButtonModule} from '@angular/material/button';
 
 
 @NgModule({
@@ -21,7 +23,10 @@ import { FormsModule } from '@angular/forms';
     BrowserModule,
     FlexLayoutModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MatSidenavModule,
+    MatButtonModule,
+    IonicModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]
