@@ -27,7 +27,7 @@ export class SearchComponent implements OnInit {
         console.log(result);
     }
 
-    OpenSideNav()
+    OpenDrawer()
     {
         this.inputDrawer.toggle()
         console.log("filter")

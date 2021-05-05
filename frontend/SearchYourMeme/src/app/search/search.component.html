@@ -1,4 +1,5 @@
-<div style="margin-top: 21em;">
+<div style="margin-top: 14em;">
+    <img src="../assets/logo.png" width="500px" style="transform:rotate(4deg);"/>
     <div fxLayout="row" fxLayoutAlign="center center">
         <form id="search-form">
             <div class="search">
@@ -14,7 +15,8 @@
                     value="🔍" />
             </div>
         </form>
-        <button mat-icon-button color="primary" (click)="OpenSideNav()" class="filter-btn">
+        <button mat-icon-button color="primary" (click)="OpenDrawer()" class="filter-btn" matTooltip="Filters"
+            matTooltipPosition="above">
             <mat-icon>tune</mat-icon>
         </button>
     </div>

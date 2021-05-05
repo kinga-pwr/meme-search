@@ -1,2 +1,48 @@
-<p>filter works!</p>
-<ion-range dualKnobs="true" min="21" max="72" step="3" snaps="true" pin="true"></ion-range>
+<div fxLayout="column" fxLayoutAlign="center" style="min-width: 20rem;">
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+        <h3 style="text-decoration: underline; margin: 0;">FILTERS</h3>
+        <button mat-icon-button color="primary" (click)="CloseDrawer()" class="filter-btn" matTooltip="Close filters"
+            matTooltipPosition="right" class="close-btn">
+            <mat-icon class="close-icon">close</mat-icon>
+        </button>
+    </div>
+    <form [formGroup]="filterForm" fxLayout="column" fxLayoutAlign="center" style="margin: 1rem;">
+        <mat-form-field appearance="outline" [style.fontSize.px]="12" style="max-height: 50px;">
+            <mat-label>Category</mat-label>
+            <input type="text"
+                    matInput
+                    formControlName="category"
+                    [matAutocomplete]="autoField">
+            <button mat-button *ngIf="f.category.value" matSuffix mat-icon-button aria-label="Clear" (click)="ClearCategory()">
+                    <mat-icon>close</mat-icon>
+            </button>
+            <mat-autocomplete autoActiveFirstOption #autoField="matAutocomplete">
+                <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
+                {{ category }}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="f.category.hasError('incorrect')">
+                Please select proper category
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" [style.fontSize.px]="12" style="max-height: 50px;">
+            <mat-label>Source</mat-label>
+            <input type="text"
+                    matInput
+                    formControlName="category"
+                    [matAutocomplete]="autoField">
+            <button mat-button *ngIf="f.category.value" matSuffix mat-icon-button aria-label="Clear" (click)="ClearCategory()">
+                    <mat-icon>close</mat-icon>
+            </button>
+            <mat-autocomplete autoActiveFirstOption #autoField="matAutocomplete">
+                <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
+                {{ category }}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="f.category.hasError('incorrect')">
+                Please select proper category
+            </mat-error>
+        </mat-form-field>
+        <ion-range dualKnobs="true" min="21" max="72" step="3" snaps="true" pin="true"></ion-range>
+    </form>
+</div>

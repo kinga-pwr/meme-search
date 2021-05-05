@@ -1,10 +1,10 @@
 <mat-drawer-container class="drawer-container" autosize>
     <mat-drawer #drawer class="sidenav" mode="side">
-        <app-filter></app-filter>
+        <app-filter [inputDrawer]="drawer"></app-filter>
     </mat-drawer>
   
     <div fxLayout="column" fxLayoutAlign="center center">
         <app-search [inputDrawer]="drawer"></app-search>
+        <router-outlet></router-outlet>
     </div>
 </mat-drawer-container>
-<router-outlet></router-outlet>
