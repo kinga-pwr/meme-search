@@ -1,0 +1,38 @@
+<mat-drawer-container class="drawer-container"
+                      autosize>
+    <mat-drawer #drawer
+                class="sidenav"
+                mode="side">
+        <ion-range dualKnobs="true"
+                   min="21"
+                   max="72"
+                   step="3"
+                   snaps="true"
+                   pin="true"></ion-range>
+    </mat-drawer>
+
+    <div fxLayout="column"
+         fxLayoutAlign="center left">
+        <div flex
+             fxLayout="row"
+             style="margin: 1rem;">
+            <button mat-button
+                    (click)="drawer.toggle()">
+                FILTER
+            </button>
+        </div>
+        <div fxLayout="column"
+             fxLayoutAlign="center center">
+            <app-search (memesEvent)="SetMemes($event)"
+                        (searching)="SearchingStatus($event)"></app-search>
+            <mat-progress-bar *ngIf="searching"
+                              class="spinner"
+                              mode="indeterminate"></mat-progress-bar>
+        </div>
+    </div>
+    <div fxLayout="column"
+         fxLayoutAlign="left left">
+        <app-meme-list style="margin-left: 20px"
+                       [memes]="memes"></app-meme-list>
+    </div>
+</mat-drawer-container>
