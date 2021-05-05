@@ -16,6 +16,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import {MatInputModule} from '@angular/material/input';
     ReactiveFormsModule,
     MatAutocompleteModule,
     MatInputModule,
+    MatChipsModule,
+    MatCheckboxModule,
     IonicModule.forRoot(),
   ],
   providers: [],

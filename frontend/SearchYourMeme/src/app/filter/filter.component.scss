@@ -5,3 +5,7 @@
 .close-icon{
     font-size: medium;
 }
+
+ion-range::part(pin) {
+    transform: translate3d(0px, -27px, 0px) scale(1);
+  }

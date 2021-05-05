@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ɵsetCurrentInjector } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatChip, MatChipList } from '@angular/material/chips';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -18,18 +20,36 @@ export class FilterComponent implements OnInit {
 
   categories: string[] = ["pierwsza", "druga"];
   filteredCategories!: Observable<string[]>;
+
+  sources: string[] = ["source 1", "source 2"];
+  filteredSources!: Observable<string[]>;
+
+  statusChips = ["Confirmed", "Submitted", "Deadpool"];
+
+  @ViewChild('chipList') 
+  chipList!: MatChipList;
   
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({
       category: [''],
+      source: [''],
+      statuses: [[...this.statusChips], Validators.required],
+      minYear: [1968],
+      maxYear: [2021]
     });
 
     this.filteredCategories = this.filterForm.controls['category'].valueChanges.pipe(
       startWith(''),
       map(value => typeof value === 'string' ? value : ''),
       map(name => name ? this._filter(name) : this.categories.slice(0,10))
+    );
+
+    this.filteredSources = this.filterForm.controls['source'].valueChanges.pipe(
+      startWith(''),
+      map(value => typeof value === 'string' ? value : ''),
+      map(name => name ? this._filter(name) : this.sources.slice(0,10))
     );
   }
 
@@ -43,6 +63,26 @@ export class FilterComponent implements OnInit {
   ClearCategory()
   {
     this.filterForm.patchValue({ category: '' });
+  }
+
+  ClearSource()
+  {
+    this.filterForm.patchValue({ source: '' });
+  }
+
+  ToggleSelection(chip: MatChip) {
+    chip.toggleSelected();
+    var current: string[] = this.filterForm.get('statuses')!.value;
+
+    if (chip.selected)
+      current.push(chip.value);
+    else
+    {
+      var idx = current.indexOf(chip.value);
+      current.splice(idx, 1);
+    }
+
+    this.filterForm.controls.statuses.setValue(current);
   }
 
   private _filter(name: any): any {
