@@ -1,9 +1,11 @@
+import { stringify } from '@angular/compiler/src/util';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatChip, MatChipList } from '@angular/material/chips';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { InformationService } from '../services/information.service';
 
 @Component({
   selector: 'app-filter',
@@ -17,10 +19,10 @@ export class FilterComponent implements OnInit {
 
   filterForm!: FormGroup;
 
-  categories: string[] = ["pierwsza", "druga"];
+  categories: string[] = [];
   filteredCategories!: Observable<string[]>;
 
-  sources: string[] = ["source 1", "source 2"];
+  sources: string[] = [];
   filteredSources!: Observable<string[]>;
 
   statusChips = ["Confirmed", "Submitted", "Deadpool"];
@@ -29,7 +31,27 @@ export class FilterComponent implements OnInit {
   @ViewChild('chipList') 
   chipList!: MatChipList;
   
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private infoService: InformationService) { 
+    infoService.Categories().subscribe(
+      data => {
+        for (var cat in data)
+        {
+          this.categories.push(cat);
+        }
+      },
+      error => { console.log("error") }
+    );
+
+    infoService.Source().subscribe(
+      data => {
+        for (var source in data)
+        {
+          this.sources.push(source);
+        }
+      },
+      error => { console.log("error") }
+    );
+  }
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({

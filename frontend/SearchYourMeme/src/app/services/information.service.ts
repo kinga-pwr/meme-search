@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Dictionary } from '../utils/dictionary.interface';
 import { HttpService } from './http.service';
 
@@ -9,33 +10,22 @@ import { HttpService } from './http.service';
 export class InformationService extends HttpService {
 
     private statuses: string[] = [];
-    private details!: Dictionary<number>;
-    private categories!: Dictionary<number>;
 
-    async Statuses(): Promise<string[]> {
+    Statuses(): Observable<string[]> {
         get: {
-            if (this.statuses.length == 0) {
-                this.statuses = await this.http.get<string[]>(`${this.BASE_URL}Information/Statuses`).toPromise();
-            }
-            return this.statuses;
+            return this.http.get<string[]>(`${this.BASE_URL}Information/Statuses`);
         }
     }
 
-    async Details(): Promise<Dictionary<number>> {
+    Categories(): Observable<Map<string, number>> {
         get: {
-            if (this.details == null) {
-                this.details = await this.http.get<Dictionary<number>>(`${this.BASE_URL}Information/Details`).toPromise();
-            }
-            return this.details;
+            return this.http.get<Map<string, number>>(`${this.BASE_URL}Information/Categories`);
         }
     }
 
-    async Categories(): Promise<Dictionary<number>> {
+    Source(): Observable<Map<string, number>> {
         get: {
-            if (this.categories == null) {
-                this.categories = await this.http.get<Dictionary<number>>(`${this.BASE_URL}Information/Categories`).toPromise();
-            }
-            return this.categories;
+            return this.http.get<Map<string, number>>(`${this.BASE_URL}Information/Details`);
         }
     }
 }
