@@ -14,22 +14,16 @@ import { InformationService } from '../services/information.service';
 })
 export class FilterComponent implements OnInit {
 
-    @Input()
-    inputDrawer!: MatDrawer;
 
-    filterForm!: FormGroup;
-
+    @Input() inputDrawer!: MatDrawer;
+    @ViewChild('chipList') chipList!: MatChipList;
     categories: string[] = [];
     filteredCategories!: Observable<string[]>;
-
-    sources: string[] = [];
     filteredSources!: Observable<string[]>;
-
-    statusChips = ["Confirmed", "Submitted", "Deadpool"];
+    filterForm!: FormGroup;
     filters = ["Status: Confirmed", "Status: Submitted", "Status: Deadpool"];
-
-    @ViewChild('chipList')
-    chipList!: MatChipList;
+    sources: string[] = [];
+    statusChips = ["Confirmed", "Submitted", "Deadpool"];
 
     constructor(private fb: FormBuilder, private infoService: InformationService) {
         infoService.Categories().subscribe(

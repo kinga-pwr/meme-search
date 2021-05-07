@@ -22,7 +22,7 @@ export class InformationService extends HttpService {
             return this.http.get<Map<string, number>>(`${this.BASE_URL}Information/Categories`);
         }
     }
-
+    
     Source(): Observable<Map<string, number>> {
         get: {
             return this.http.get<Map<string, number>>(`${this.BASE_URL}Information/Details`);
