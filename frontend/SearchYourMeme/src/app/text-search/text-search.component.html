@@ -1,27 +1,17 @@
-
-
+<div fxLayout="column"
+     fxLayoutAlign="center left">
     <div fxLayout="column"
-         fxLayoutAlign="center left">
-        <div flex
-             fxLayout="row"
-             style="margin: 1rem;">
-            <button mat-button
-                    (click)="inputDrawer.toggle()">
-                FILTER
-            </button>
-        </div>
-        <div fxLayout="column"
-             fxLayoutAlign="center center">
-            <app-search (memesEvent)="SetMemes($event)"
-                        [inputDrawer]="inputDrawer"
-                        (searching)="SearchingStatus($event)"></app-search>
-            <mat-progress-bar *ngIf="searching"
-                              class="spinner"
-                              mode="indeterminate"></mat-progress-bar>
-        </div>
+         fxLayoutAlign="center center">
+        <app-search (memesEvent)="SetMemes($event)"
+                    [inputDrawer]="inputDrawer"
+                    (searching)="SearchingStatus($event)"></app-search>
+        <mat-progress-bar *ngIf="searching"
+                          class="spinner"
+                          mode="indeterminate"></mat-progress-bar>
     </div>
-    <div fxLayout="column"
-         fxLayoutAlign="left left">
-        <app-meme-list style="margin-left: 20px"
-                       [memes]="memes"></app-meme-list>
-    </div>
+</div>
+<div fxLayout="column"
+     fxLayoutAlign="left left">
+    <app-meme-list style="margin-left: 20px"
+                   [memes]="memes"></app-meme-list>
+</div>

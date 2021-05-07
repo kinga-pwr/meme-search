@@ -1,9 +1,11 @@
+import { stringify } from '@angular/compiler/src/util';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatChip, MatChipList } from '@angular/material/chips';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { InformationService } from '../services/information.service';
 
 @Component({
     selector: 'app-filter',
@@ -12,18 +14,42 @@ import { map, startWith } from 'rxjs/operators';
 })
 export class FilterComponent implements OnInit {
 
+    @Input()
+    inputDrawer!: MatDrawer;
 
-    @Input() inputDrawer!: MatDrawer;
-    @ViewChild('chipList') chipList!: MatChipList;
-    categories: string[] = ["pierwsza", "druga"];
-    filteredCategories!: Observable<string[]>;
-    filteredSources!: Observable<string[]>;
     filterForm!: FormGroup;
-    filters = ["Status: Confirmed", "Status: Submitted", "Status: Deadpool"];
-    sources: string[] = ["source 1", "source 2"];
-    statusChips = ["Confirmed", "Submitted", "Deadpool"];
 
-    constructor(private fb: FormBuilder) { }
+    categories: string[] = [];
+    filteredCategories!: Observable<string[]>;
+
+    sources: string[] = [];
+    filteredSources!: Observable<string[]>;
+
+    statusChips = ["Confirmed", "Submitted", "Deadpool"];
+    filters = ["Status: Confirmed", "Status: Submitted", "Status: Deadpool"];
+
+    @ViewChild('chipList')
+    chipList!: MatChipList;
+
+    constructor(private fb: FormBuilder, private infoService: InformationService) {
+        infoService.Categories().subscribe(
+            data => {
+                for (var cat in data) {
+                    this.categories.push(cat);
+                }
+            },
+            error => { console.log("error") }
+        );
+
+        infoService.Source().subscribe(
+            data => {
+                for (var source in data) {
+                    this.sources.push(source);
+                }
+            },
+            error => { console.log("error") }
+        );
+    }
 
     ngOnInit(): void {
         this.filterForm = this.fb.group({

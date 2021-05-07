@@ -26,6 +26,8 @@ namespace MemeSearch.API.Controllers
         [HttpGet("Search/{query}")]
         public IActionResult Search(string query, int results = 20, int start = 0)
         {
+            query = query.Trim();
+
             if (!ValidationHelper.ValidateSearch(query, results, start, out string message))
             {
                 return BadRequest(message);
@@ -38,6 +40,7 @@ namespace MemeSearch.API.Controllers
         public IActionResult AdvancedSearch(string query, [FromBody]SearchParameters parameters, int results = 20, int start = 0)
         {
             if (query is null) query = string.Empty;
+            query = query.Trim();
 
             if (!ValidationHelper.ValidateAdvancedSearch(query, parameters, results, start, out string message))
             {

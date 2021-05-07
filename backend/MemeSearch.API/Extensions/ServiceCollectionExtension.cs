@@ -30,8 +30,6 @@ namespace MemeSearch.API.Extensions
 
         public static void SetSearchEngine(this IServiceCollection services, IConfiguration configuration)
         {
-            Thread.Sleep(10000);
-
             var connectionSettings = new ConnectionSettings(new Uri(configuration["Elasticsearch:Url"]))
                 .DefaultIndex(configuration["Elasticsearch:Index"]);
 

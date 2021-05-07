@@ -1,5 +1,7 @@
 ﻿using MemeSearch.Logic.Interfaces;
+using MemeSearch.Logic.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace MemeSearch.API.Controllers
 {
@@ -23,13 +25,21 @@ namespace MemeSearch.API.Controllers
         [HttpGet("Details")]
         public IActionResult GetDetails()
         {
-            return Ok(_addInfoService.Details);
+            return Ok(_addInfoService.Details.Select(elem => new AdditionalInfoItem()
+            {
+                Name = elem.Key,
+                Quantity = elem.Value
+            }).OrderByDescending(elem => elem.Quantity));
         }
 
         [HttpGet("Categories")]
         public IActionResult GetCategories()
         {
-            return Ok(_addInfoService.Categories);
+            return Ok(_addInfoService.Categories.Select(elem => new AdditionalInfoItem()
+            {
+                Name = elem.Key,
+                Quantity = elem.Value
+            }).OrderByDescending(elem => elem.Quantity));
         }
     }
 }
