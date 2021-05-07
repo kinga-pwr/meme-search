@@ -1,19 +1,26 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+import { HttpService } from './http.service';
 import { Injectable } from '@angular/core';
 import { Meme } from '../models/meme';
 import { QueryParams } from '../models/query-params.interface';
-import { HttpService } from './http.service';
-
 @Injectable({
     providedIn: 'root'
 })
 export class SearchService extends HttpService {
 
-    async Search(text: string): Promise<Meme[]> {
-        return await this.http.get<Meme[]>(this.BASE_URL + 'Search/' + text).toPromise();
+    async Search(text: string, page: number, resultsCount: number): Promise<Meme[]> {
+
+        let params = new HttpParams().set("results", resultsCount.toString()).set("start", page.toString())
+
+        return await this.http.get<Meme[]>(this.BASE_URL + 'Search/' + text, { params: params }).toPromise();
     }
 
-    async AdnvancedSearch(text: string, params: QueryParams): Promise<Meme[]> {
-        return await this.http.post<Meme[]>(this.BASE_URL + 'AdvancedSearch/' + text, params).toPromise();
+    async AdnvancedSearch(text: string, queryParams: QueryParams, page: number, resultsCount: number): Promise<Meme[]> {
+
+        let params = new HttpParams().set("results", resultsCount.toString()).set("start", page.toString())
+
+        return await this.http.post<Meme[]>(this.BASE_URL + 'AdvancedSearch/' + text, queryParams, { params: params }).toPromise();
     }
+
+
 }

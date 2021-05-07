@@ -1,13 +1,12 @@
-<!-- <div fxLayout="row"
-     fxLayoutAlign="space-evenly none"
-     fxLayoutGap="10px"> -->
-<mat-grid-list cols="5">
-    <div *ngFor="let meme of memes">
-        <mat-grid-tile>
-            <app-meme-list-item class="meme-item"
-                                [meme]="meme"></app-meme-list-item>
-        </mat-grid-tile>
-    </div>
-</mat-grid-list>
+<div class="make-scrollable" #scrol>
+    <mat-grid-list cols="5">
 
-<!-- </div> -->
+        <div *ngFor="let meme of memes">
+            <mat-grid-tile>
+                <app-meme-list-item class="meme-item"
+                                    [meme]="meme"></app-meme-list-item>
+            </mat-grid-tile>
+        </div>
+
+    </mat-grid-list>
+</div>

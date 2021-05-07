@@ -4,28 +4,49 @@ import { Meme } from '../models/meme';
 import { Output, EventEmitter } from '@angular/core';
 import { QueryParams } from '../models/query-params.interface';
 import { SearchService } from '../services/search.service';
+import { ScrollService } from '../services/scroll.service';
 
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.scss']
 })
-export class SearchComponent {
+export class SearchComponent implements OnInit {
 
     searchBox: string = '';
+    lastSearch: string = '';
     @Input() inputDrawer!: MatDrawer;
     @Input() queryParams!: QueryParams;
     @Output() memesEvent = new EventEmitter<Meme[]>();
+    @Output() appendMemesEvent = new EventEmitter<Meme[]>();
     @Output() searching = new EventEmitter<boolean>();
 
-    constructor(private searchService: SearchService) {
+    public page: number;
+    public resultsCount: number;
 
+    constructor(private searchService: SearchService, private scrollService: ScrollService) {
+        this.page = 0;
+        this.resultsCount = 20;
+    }
+    ngOnInit(): void {
+        this.scrollService.scrollEvent.subscribe(() => {
+            this.page+=this.resultsCount;
+            this.SearchNext();
+        });
     }
 
     async Search() {
+        this.page = 0;
         this.searching.emit(true);
-        let result = await this.searchService.Search(this.searchBox);
+        let result = await this.searchService.Search(this.searchBox, this.page, this.resultsCount);
         this.memesEvent.emit(result);
+    }
+
+
+    async SearchNext() {
+        this.searching.emit(true);
+        let result = await this.searchService.Search(this.searchBox, this.page, this.resultsCount);
+        this.appendMemesEvent.emit(result);
     }
 
     OpenDrawer() {

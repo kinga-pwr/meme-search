@@ -1,4 +1,4 @@
-import { Input } from '@angular/core';
+import { HostListener, Input } from '@angular/core';
 import { AfterViewInit } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Meme } from '../models/meme';
@@ -20,8 +20,10 @@ export class MemeListItemComponent implements OnInit, AfterViewInit {
 
 
     ngAfterViewInit() {
-        console.log(this.meme);
 
     }
-
+    @HostListener('window:scroll', ['$event']) onScrollEvent($event: any) {
+        console.log($event);
+        console.log("scrolling");
+    }
 }

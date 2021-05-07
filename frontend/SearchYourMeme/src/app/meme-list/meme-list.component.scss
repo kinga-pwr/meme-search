@@ -14,3 +14,8 @@
 //     object-fit: cover;
 //     vertical-align: bottom;
 // }
+
+.make-scrollable {
+    height: 80vh; //Or any other height you wish
+    overflow-y: scroll;
+}

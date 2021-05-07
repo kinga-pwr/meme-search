@@ -6,6 +6,7 @@ import { FilterComponent } from './filter/filter.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { IonicModule } from '@ionic/angular';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -43,6 +44,7 @@ import { TextSearchComponent } from './text-search/text-search.component';
         FlexLayoutModule,
         FormsModule,
         HttpClientModule,
+        InfiniteScrollModule,
         MatAutocompleteModule,
         MatButtonModule,
         MatCardModule,

@@ -3,7 +3,10 @@
     <div fxLayout="column"
          fxLayoutAlign="center center">
         <app-search (memesEvent)="SetMemes($event)"
+                    (appendMemesEvent)="AppendMemes($event)"
                     [inputDrawer]="inputDrawer"
+                    [class.searched]="memes != null"
+                    [class.no-search]="memes == null"
                     (searching)="SearchingStatus($event)"></app-search>
         <mat-progress-bar *ngIf="searching"
                           class="spinner"
@@ -12,6 +15,8 @@
 </div>
 <div fxLayout="column"
      fxLayoutAlign="left left">
-    <app-meme-list style="margin-left: 20px"
+    <app-meme-list style="margin-left: 20px;"
                    [memes]="memes"></app-meme-list>
+
+
 </div>

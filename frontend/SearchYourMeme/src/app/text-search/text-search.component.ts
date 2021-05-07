@@ -1,7 +1,8 @@
-import { Input } from '@angular/core';
+import { HostListener, Input } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Meme } from '../models/meme';
+import { ScrollService } from '../services/scroll.service';
 import { SearchService } from '../services/search.service';
 
 @Component({
@@ -31,6 +32,18 @@ export class TextSearchComponent implements OnInit {
         this.searching = false;
     }
     ngOnInit(): void {
+    }
+    AppendMemes(memes: Meme[]): void {
+        memes.forEach(m => {
+            m.categories = m.category.split(' ')
+            // ! usuwa categorie Undefined
+            // const index = m.categories.indexOf('Undefined', 0);
+            // if (index > -1) {
+            //     m.categories.splice(index, 1);
+            // }
+        })
+        this.memes = this.memes.concat(memes);
+        this.searching = false;
     }
 
 }
