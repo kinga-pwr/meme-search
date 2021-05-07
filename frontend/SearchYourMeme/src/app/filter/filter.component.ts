@@ -5,6 +5,8 @@ import { MatChip, MatChipList } from '@angular/material/chips';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { Category } from '../models/category';
+import { Source } from '../models/source';
 import { InformationService } from '../services/information.service';
 
 @Component({
@@ -17,29 +19,25 @@ export class FilterComponent implements OnInit {
 
     @Input() inputDrawer!: MatDrawer;
     @ViewChild('chipList') chipList!: MatChipList;
-    categories: string[] = [];
-    filteredCategories!: Observable<string[]>;
-    filteredSources!: Observable<string[]>;
+    categories: Category[] = [];
+    filteredCategories!: Observable<Category[]>;
+    filteredSources!: Observable<Source[]>;
     filterForm!: FormGroup;
     filters = ["Status: Confirmed", "Status: Submitted", "Status: Deadpool"];
-    sources: string[] = [];
+    sources: Source[] = [];
     statusChips: any = [];
 
     constructor(private fb: FormBuilder, private infoService: InformationService) {
         infoService.Categories().subscribe(
             data => {
-                for (var cat in data) {
-                    this.categories.push(cat);
-                }
+                this.categories = data;
             },
             error => { console.log("error") }
         );
 
         infoService.Source().subscribe(
             data => {
-                for (var source in data) {
-                    this.sources.push(source);
-                }
+                this.sources = data;
             },
             error => { console.log("error") }
         );
@@ -64,13 +62,13 @@ export class FilterComponent implements OnInit {
         this.filteredCategories = this.filterForm.controls['category'].valueChanges.pipe(
             startWith(''),
             map(value => typeof value === 'string' ? value : ''),
-            map(name => name ? this._filter(name) : this.categories.slice(0, 10))
+            map(name => name ? this._filter(this.categories, name) : this.categories.slice(0, 10))
         );
 
         this.filteredSources = this.filterForm.controls['source'].valueChanges.pipe(
             startWith(''),
             map(value => typeof value === 'string' ? value : ''),
-            map(name => name ? this._filter(name) : this.sources.slice(0, 10))
+            map(name => name ? this._filter(this.sources, name) : this.sources.slice(0, 10))
         );
     }
 
@@ -109,10 +107,18 @@ export class FilterComponent implements OnInit {
         this.filters.splice(idx, 1);
     }
 
-    private _filter(name: any): any {
+    DisplayCategory(cat: Category): string {
+      return cat ? `${cat.name} (${cat.quantity})` : "";
+    }
+
+    DisplaySource(source: Source): string {
+      return source ? `${source.name} (${source.quantity})` : "";
+    }
+
+    private _filter(list: any, name: any): any {
         const filterValue = name.toLowerCase();
 
-        return this.categories.filter(cat => cat.toLowerCase().indexOf(filterValue) > -1);
+        return list.filter((item: any)=> item.name.toLowerCase().indexOf(filterValue) > -1);
     }
 }
 

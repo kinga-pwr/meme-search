@@ -40,10 +40,10 @@
                 <mat-icon>close</mat-icon>
             </button>
             <mat-autocomplete autoActiveFirstOption
-                              #autoCategory="matAutocomplete">
+                              #autoCategory="matAutocomplete" [displayWith]="DisplayCategory">
                 <mat-option *ngFor="let category of filteredCategories | async"
-                            [value]="category">
-                    {{ category }}
+                            [value]="category" [matTooltip]="category.name + ' (' + category.quantity + ')'" matTooltipPosition="right">
+                    {{ category.name }} ({{ category.quantity }})
                 </mat-option>
             </mat-autocomplete>
             <mat-error *ngIf="f.category.hasError('incorrect')">
@@ -75,10 +75,10 @@
                 <mat-icon>close</mat-icon>
             </button>
             <mat-autocomplete autoActiveFirstOption
-                              #autoSource="matAutocomplete">
+                              #autoSource="matAutocomplete" [displayWith]="DisplaySource">
                 <mat-option *ngFor="let source of filteredSources | async"
-                            [value]="source">
-                    {{ source }}
+                            [value]="source" [matTooltip]="source.name + ' (' + source.quantity + ')'" matTooltipPosition="right">
+                        {{ source.name }} ({{ source.quantity }})
                 </mat-option>
             </mat-autocomplete>
             <mat-error *ngIf="f.source.hasError('incorrect')">
