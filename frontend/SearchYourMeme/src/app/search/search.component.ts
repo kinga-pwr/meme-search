@@ -30,7 +30,6 @@ export class SearchComponent {
 
     OpenDrawer() {
         this.inputDrawer.toggle()
-        console.log("filter")
     }
 
 }

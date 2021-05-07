@@ -19,7 +19,7 @@
           fxLayoutAlign="center"
           style="margin-left: 1rem;
         margin-right: 1rem;"
-          fxLayoutGap="2%">
+          fxLayoutGap="4%">
         <h3>Category</h3>
         <mat-form-field appearance="outline"
                         [style.fontSize.px]="12"
@@ -51,9 +51,10 @@
             </mat-error>
         </mat-form-field>
         <h3>Status</h3>
-        <mat-chip-list #chipList selectable multiple formControlName="statuses">
-            <mat-chip #c="matChip" *ngFor="let chip of statusChips" color="accent" (click)="ToggleSelection(c)" style="cursor: pointer; font-size: small;">{{ chip }}</mat-chip>
-        </mat-chip-list>
+        <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="2%">
+            <mat-chip #c="matChip" *ngFor="let chip of statusChips" color="accent" (click)="ToggleSelection(c)" 
+            [selected]="chip.selected" style="cursor: pointer; font-size: small;">{{ chip.name }}</mat-chip>
+        </div>
         <h3>Source</h3>
         <mat-form-field appearance="outline"
                         [style.fontSize.px]="12"
@@ -85,21 +86,43 @@
             </mat-error>
         </mat-form-field>
         <h3>Years</h3>
-        <ion-range dualKnobs="true"
-                   min="1968"
-                   max="2021"
-                   step="1"
-                   snaps="false"
-                   pin="true"></ion-range>
+        <div>
+            <ion-range dualKnobs="true"
+                    min="1968"
+                    max="2021"
+                    step="1"
+                    snaps="false"
+                    pin="true"></ion-range>
+            <div fxLayout="row" fxLayoutAlign="center center">
+                <mat-form-field appearance="outline"
+                    [style.fontSize.px]="12"
+                    color="accent"
+                    style="max-height: 50px; max-width: 75px;">
+                    <input type="number"
+                        matInput
+                        formControlName="minYear" min="1968" [max]="2021">
+                </mat-form-field>
+                <span style="margin: 0.5rem;">-</span>
+                <mat-form-field appearance="outline"
+                    [style.fontSize.px]="12"
+                    color="accent"
+                    style="max-height: 50px; max-width: 75px;">
+                <input type="number"
+                    matInput
+                    formControlName="maxYear" [min]="1968" max="2021">
+            </mat-form-field>
+        </div>
+        </div>
         <h3>Search in</h3>
-        <section>
-            <mat-checkbox>title</mat-checkbox>
-            <mat-checkbox style="margin-left: 4rem;">image</mat-checkbox>
-        </section>
-        <mat-checkbox>content</mat-checkbox>
+        <div>
+            <section>
+                <mat-checkbox>title</mat-checkbox>
+                <mat-checkbox style="margin-left: 4rem;">image</mat-checkbox>
+            </section>
+            <mat-checkbox>content</mat-checkbox>
+        </div>
         <h3>Your filters:</h3>
-        <mat-chip-list style="height: 7.5rem; flex-wrap: wrap; max-width: 300px; overflow-y: auto;
-            overflow-x: hidden;">
+        <mat-chip-list style="flex-wrap: wrap; max-width: 300px;">
             <mat-chip #c="matChip"
                       *ngFor="let chip of filters"
                       removable="true"

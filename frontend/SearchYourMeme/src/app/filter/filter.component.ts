@@ -23,7 +23,7 @@ export class FilterComponent implements OnInit {
     filterForm!: FormGroup;
     filters = ["Status: Confirmed", "Status: Submitted", "Status: Deadpool"];
     sources: string[] = [];
-    statusChips = ["Confirmed", "Submitted", "Deadpool"];
+    statusChips: any = [];
 
     constructor(private fb: FormBuilder, private infoService: InformationService) {
         infoService.Categories().subscribe(
@@ -46,8 +46,7 @@ export class FilterComponent implements OnInit {
 
         infoService.Statuses().subscribe(
             data => {
-                this.statusChips = data;
-                // data.forEach(status => this.statusChips.push({name: status, selected: true}));
+                data.forEach(status => this.statusChips.push({name: status, selected: true}));
             },
             error => { console.log("error") }
         );

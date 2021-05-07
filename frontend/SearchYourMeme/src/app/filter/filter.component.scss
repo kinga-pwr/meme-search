@@ -13,23 +13,3 @@ ion-range::part(pin) {
 .filters.mat-standard-chip{
     min-height: 23px;
 }
-
-/* width */
-::-webkit-scrollbar {
-    width: 5px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: rgb(52,58,64); 
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: rgb(32,35,36); 
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(32, 35, 36, 0.642); 
-}
