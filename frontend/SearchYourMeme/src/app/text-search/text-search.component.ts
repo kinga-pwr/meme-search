@@ -1,4 +1,6 @@
+import { Input } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { MatDrawer } from '@angular/material/sidenav';
 import { Meme } from '../models/meme';
 import { SearchService } from '../services/search.service';
 
@@ -8,9 +10,10 @@ import { SearchService } from '../services/search.service';
     styleUrls: ['./text-search.component.scss']
 })
 export class TextSearchComponent implements OnInit {
-
     memes!: Meme[];
     searching: boolean = false;
+
+    @Input() inputDrawer!: MatDrawer;
     constructor() { }
     SearchingStatus(searching: boolean): void {
         this.searching = searching;

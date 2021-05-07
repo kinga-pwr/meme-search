@@ -1,28 +1,25 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { QueryParams } from '../models/query-params.interface';
-import { InformationService } from '../services/information.service';
-import { SearchService } from '../services/search.service';
-import { Output, EventEmitter } from '@angular/core';
+import { MatDrawer } from '@angular/material/sidenav';
 import { Meme } from '../models/meme';
+import { Output, EventEmitter } from '@angular/core';
+import { QueryParams } from '../models/query-params.interface';
+import { SearchService } from '../services/search.service';
 
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent {
 
     searchBox: string = '';
+    @Input() inputDrawer!: MatDrawer;
     @Input() queryParams!: QueryParams;
-
+    @Output() memesEvent = new EventEmitter<Meme[]>();
     @Output() searching = new EventEmitter<boolean>();
 
-    @Output() memesEvent = new EventEmitter<Meme[]>();
     constructor(private searchService: SearchService) {
 
-    }
-    ngOnInit(): void {
     }
 
     async Search() {
@@ -30,5 +27,10 @@ export class SearchComponent implements OnInit {
         let result = await this.searchService.Search(this.searchBox);
         this.memesEvent.emit(result);
     }
-    
+
+    OpenDrawer() {
+        this.inputDrawer.toggle()
+        console.log("filter")
+    }
+
 }

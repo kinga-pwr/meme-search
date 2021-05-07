@@ -1,2 +1,13 @@
-<app-text-search></app-text-search>
-<router-outlet></router-outlet>
+<mat-drawer-container class="drawer-container"
+                      autosize>
+    <mat-drawer #drawer
+                class="sidenav"
+                mode="side">
+        <app-filter [inputDrawer]="drawer"></app-filter>
+    </mat-drawer>
+    <div fxLayout="column"
+         fxLayoutAlign="center strech">
+        <app-text-search [inputDrawer]="drawer"></app-text-search>
+        <router-outlet></router-outlet>
+    </div>
+</mat-drawer-container>

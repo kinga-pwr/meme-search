@@ -19,12 +19,18 @@
     z-index: 10;
     border-radius: 10px;
     border: none;
-    background: rgba(0, 0, 0, 0.281); /* Set the bg image here. with "no-repeat" */
+    color: black; /* Set the bg image here. with "no-repeat" */
 }
 
 .search {
     position: relative;
     width: 350px;
     height: 30px;
+}
+
+.filter-btn {
+    margin-left: 2.5rem; 
+    margin-top: 0.5rem; 
+    color: white;
 }
 

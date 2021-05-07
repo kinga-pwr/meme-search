@@ -1,0 +1,145 @@
+<div fxLayout="column"
+     fxLayoutAlign="center"
+     style="min-width: 20rem;">
+    <div fxLayout="row"
+         fxLayoutAlign="space-between center">
+        <h3 style="text-decoration: underline; margin: 0;">FILTERS</h3>
+        <button mat-icon-button
+                color="primary"
+                (click)="CloseDrawer()"
+                class="filter-btn"
+                matTooltip="Close filters"
+                matTooltipPosition="right"
+                class="close-btn">
+            <mat-icon class="close-icon">close</mat-icon>
+        </button>
+    </div>
+    <form [formGroup]="filterForm"
+          fxLayout="column"
+          fxLayoutAlign="center"
+          style="margin-left: 1rem;
+        margin-right: 1rem;"
+          fxLayoutGap="2%">
+        <h3>Category</h3>
+        <mat-form-field appearance="outline"
+                        [style.fontSize.px]="12"
+                        color="accent"
+                        style="max-height: 50px;">
+            <mat-label>Category</mat-label>
+            <input type="text"
+                   matInput
+                   placeholder="Search category..."
+                   formControlName="category"
+                   [matAutocomplete]="autoCategory">
+            <button mat-button
+                    *ngIf="f.category.value"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="ClearCategory()">
+                <mat-icon>close</mat-icon>
+            </button>
+            <mat-autocomplete autoActiveFirstOption
+                              #autoCategory="matAutocomplete">
+                <mat-option *ngFor="let category of filteredCategories | async"
+                            [value]="category">
+                    {{ category }}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="f.category.hasError('incorrect')">
+                Please select proper category
+            </mat-error>
+        </mat-form-field>
+        <h3>Status</h3>
+        <mat-chip-list id="chipList"
+                       selectable
+                       multiple
+                       formControlName="statuses">
+            <mat-chip #c="matChip"
+                      *ngFor="let chip of statusChips"
+                      color="accent"
+                      (click)="ToggleSelection(c)"
+                      style="cursor: pointer; font-size: small;">{{ chip }}</mat-chip>
+        </mat-chip-list>
+        <h3>Source</h3>
+        <mat-form-field appearance="outline"
+                        [style.fontSize.px]="12"
+                        color="accent"
+                        style="max-height: 50px;">
+            <mat-label>Source</mat-label>
+            <input type="text"
+                   matInput
+                   formControlName="source"
+                   placeholder="Search source..."
+                   [matAutocomplete]="autoSource">
+            <button mat-button
+                    *ngIf="f.source.value"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="ClearSource()">
+                <mat-icon>close</mat-icon>
+            </button>
+            <mat-autocomplete autoActiveFirstOption
+                              #autoSource="matAutocomplete">
+                <mat-option *ngFor="let source of filteredSources | async"
+                            [value]="source">
+                    {{ source }}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="f.source.hasError('incorrect')">
+                Please select proper source
+            </mat-error>
+        </mat-form-field>
+        <h3>Years</h3>
+        <ion-range dualKnobs="true"
+                   min="1968"
+                   max="2021"
+                   step="1"
+                   snaps="false"
+                   pin="true"></ion-range>
+        <h3>Search in</h3>
+        <section>
+            <mat-checkbox>title</mat-checkbox>
+            <mat-checkbox style="margin-left: 4rem;">image</mat-checkbox>
+        </section>
+        <mat-checkbox>content</mat-checkbox>
+        <h3>Your filters:</h3>
+        <mat-chip-list style="height: 7.5rem; flex-wrap: wrap; max-width: 300px; overflow-y: auto;
+            overflow-x: hidden;">
+            <mat-chip #c="matChip"
+                      *ngFor="let chip of filters"
+                      removable="true"
+                      (removed)="Remove(chip)"
+                      style="font-size: xx-small;"
+                      class="filters">
+                {{chip}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <mat-chip #c="matChip"
+                      *ngFor="let chip of filters"
+                      removable="true"
+                      (removed)="Remove(chip)"
+                      style="font-size: xx-small;"
+                      class="filters">
+                {{chip}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <mat-chip #c="matChip"
+                      *ngFor="let chip of filters"
+                      removable="true"
+                      (removed)="Remove(chip)"
+                      style="font-size: xx-small;"
+                      class="filters">
+                {{chip}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+        </mat-chip-list>
+        <div fxLayout="row"
+             fxLayoutAlign="space-between">
+            <div></div>
+            <button mat-raised-button
+                    color="accent">FILTER</button>
+        </div>
+    </form>
+</div>

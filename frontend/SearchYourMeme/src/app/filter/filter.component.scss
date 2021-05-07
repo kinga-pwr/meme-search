@@ -1,0 +1,35 @@
+.close-btn {
+    color: white;
+}
+
+.close-icon {
+    font-size: medium;
+}
+
+ion-range::part(pin) {
+    transform: translate3d(0px, -27px, 0px) scale(1);
+}
+
+.filters.mat-standard-chip {
+    min-height: 23px;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: rgb(52, 58, 64);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(32, 35, 36);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(32, 35, 36, 0.642);
+}
