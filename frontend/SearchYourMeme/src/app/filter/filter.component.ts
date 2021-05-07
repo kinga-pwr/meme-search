@@ -43,6 +43,14 @@ export class FilterComponent implements OnInit {
             },
             error => { console.log("error") }
         );
+
+        infoService.Statuses().subscribe(
+            data => {
+                this.statusChips = data;
+                // data.forEach(status => this.statusChips.push({name: status, selected: true}));
+            },
+            error => { console.log("error") }
+        );
     }
 
     ngOnInit(): void {
@@ -69,11 +77,13 @@ export class FilterComponent implements OnInit {
 
     get f() { return this.filterForm.controls; }
 
-    CloseDrawer() {
+    CloseDrawer()
+    {
         this.inputDrawer.close();
     }
 
-    ClearCategory() {
+    ClearCategory()
+    {
         this.filterForm.patchValue({ category: '' });
     }
 

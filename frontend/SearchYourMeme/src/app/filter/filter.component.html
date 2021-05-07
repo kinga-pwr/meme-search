@@ -51,15 +51,8 @@
             </mat-error>
         </mat-form-field>
         <h3>Status</h3>
-        <mat-chip-list id="chipList"
-                       selectable
-                       multiple
-                       formControlName="statuses">
-            <mat-chip #c="matChip"
-                      *ngFor="let chip of statusChips"
-                      color="accent"
-                      (click)="ToggleSelection(c)"
-                      style="cursor: pointer; font-size: small;">{{ chip }}</mat-chip>
+        <mat-chip-list #chipList selectable multiple formControlName="statuses">
+            <mat-chip #c="matChip" *ngFor="let chip of statusChips" color="accent" (click)="ToggleSelection(c)" style="cursor: pointer; font-size: small;">{{ chip }}</mat-chip>
         </mat-chip-list>
         <h3>Source</h3>
         <mat-form-field appearance="outline"
