@@ -7,9 +7,16 @@
 }
 
 ion-range::part(pin) {
-    transform: translate3d(0px, -27px, 0px) scale(1);
+    transform: translate3d(0px, -31px, 0px) scale(1.2);
 }
 
 .filters.mat-standard-chip{
     min-height: 23px;
+}
+
+.ranger{
+    --knob-background: #c2185b; 
+    --bar-background-active: #c2185b; 
+    --pin-background: #c2185b;
+    --bar-background: #7f2a4b9e;
 }

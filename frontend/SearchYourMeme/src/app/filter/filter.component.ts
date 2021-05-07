@@ -26,6 +26,8 @@ export class FilterComponent implements OnInit {
     filters = ["Status: Confirmed", "Status: Submitted", "Status: Deadpool"];
     sources: Source[] = [];
     statusChips: any = [];
+    years: any = { lower: 1968, upper: 2021 };
+    sliderrange: any;
 
     constructor(private fb: FormBuilder, private infoService: InformationService) {
         infoService.Categories().subscribe(
@@ -54,9 +56,7 @@ export class FilterComponent implements OnInit {
         this.filterForm = this.fb.group({
             category: [''],
             source: [''],
-            statuses: [[...this.statusChips], Validators.required],
-            minYear: [1968],
-            maxYear: [2021]
+            statuses: [[...this.statusChips], Validators.required]
         });
 
         this.filteredCategories = this.filterForm.controls['category'].valueChanges.pipe(
@@ -113,6 +113,10 @@ export class FilterComponent implements OnInit {
 
     DisplaySource(source: Source): string {
       return source ? `${source.name} (${source.quantity})` : "";
+    }
+
+    Filter()
+    {
     }
 
     private _filter(list: any, name: any): any {
