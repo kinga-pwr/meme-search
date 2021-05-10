@@ -1,12 +1,14 @@
 import { stringify } from '@angular/compiler/src/util';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatChip, MatChipList } from '@angular/material/chips';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Category } from '../models/category';
+import { QueryParams } from '../models/query-params.interface';
 import { Source } from '../models/source';
+import { AdvancedSearchService } from '../services/advanced-search.service';
 import { InformationService } from '../services/information.service';
 
 @Component({
@@ -18,6 +20,7 @@ export class FilterComponent implements OnInit {
 
 
     @Input() inputDrawer!: MatDrawer;
+    
     @ViewChild('chipList') chipList!: MatChipList;
     categories: Category[] = [];
     filteredCategories!: Observable<Category[]>;
@@ -29,7 +32,8 @@ export class FilterComponent implements OnInit {
     years: any = { lower: 1968, upper: 2021 };
     searchCheckboxes: any = [];
 
-    constructor(private fb: FormBuilder, private infoService: InformationService) {
+    constructor(private fb: FormBuilder, private infoService: InformationService,
+        private advancedSearchService: AdvancedSearchService) {
         infoService.Categories().subscribe(
             data => {
                 this.categories = data;
@@ -55,8 +59,8 @@ export class FilterComponent implements OnInit {
             error => { console.log("error") }
         );
 
-        this.searchCheckboxes = [{name: "title", checked: "true"}, {name: "image", checked: "true"},
-            {name: "content", checked: "true"}];
+        this.searchCheckboxes = [{name: "Title", checked: "true"}, {name: "Image", checked: "true"},
+            {name: "Content", checked: "true"}];
         this.searchCheckboxes.forEach((search: any) => this.filters.push(`Search in: ${search['name']}`));
     }
 
@@ -100,6 +104,8 @@ export class FilterComponent implements OnInit {
     ToggleSelection(chip: MatChip) {
         chip.toggleSelected();
         var current: string[] = this.filterForm.get('statuses')!.value;
+        var selected = this.statusChips.filter((c: any) => c.name === chip.value);
+        selected[0]['selected'] = chip.selected;
 
         if (chip.selected) {
             current.push(chip.value);
@@ -152,7 +158,23 @@ export class FilterComponent implements OnInit {
 
     Filter()
     {
-        // todo
+        this.advancedSearchService.Search(this.PrepareParams());
+        this.inputDrawer.close();
+    }
+
+    PrepareParams(): QueryParams {
+        var params: QueryParams = {
+            status: this.statusChips.filter((s: any) => s.selected).map((s: any) => s.name),
+            category: this.filters.filter(f => f.includes("Category")).map(f => f.split(": ")[1]),
+            details: this.filters.filter(f => f.includes("Source")).map(f => f.split(": ")[1]),
+            yearFrom: this.years.lower,
+            yearTo: this.years.upper,
+            fields: this.searchCheckboxes.filter((s: any) => s.checked).map((s: any) => s.name),
+            sort: "Year",
+            sortAsc: false,
+        };
+
+        return params;
     }
 
     private _filter(list: any, name: any): any {

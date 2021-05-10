@@ -5,6 +5,7 @@ import { Output, EventEmitter } from '@angular/core';
 import { QueryParams } from '../models/query-params.interface';
 import { SearchService } from '../services/search.service';
 import { ScrollService } from '../services/scroll.service';
+import { AdvancedSearchService } from '../services/advanced-search.service';
 
 @Component({
     selector: 'app-search',
@@ -24,7 +25,8 @@ export class SearchComponent implements OnInit {
     public page: number;
     public resultsCount: number;
 
-    constructor(private searchService: SearchService, private scrollService: ScrollService) {
+    constructor(private searchService: SearchService, private scrollService: ScrollService,
+        private advancedSearchService: AdvancedSearchService) {
         this.page = 0;
         this.resultsCount = 20;
     }
@@ -33,6 +35,16 @@ export class SearchComponent implements OnInit {
             this.page+=this.resultsCount;
             this.SearchNext();
         });
+        this.advancedSearchService.advancedSearchEvent.subscribe(
+            (params: QueryParams) => this.AdvanceSearch(params)
+        );
+    }
+
+    async AdvanceSearch(params: QueryParams) {
+        this.page = 0;
+        this.searching.emit(true);
+        let result = await this.searchService.AdnvancedSearch(this.searchBox, params, this.page, this.resultsCount);
+        this.memesEvent.emit(result);
     }
 
     async Search() {

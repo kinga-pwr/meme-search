@@ -15,6 +15,7 @@ export class TextSearchComponent implements OnInit {
     searching: boolean = false;
 
     @Input() inputDrawer!: MatDrawer;
+
     constructor() { }
     SearchingStatus(searching: boolean): void {
         this.searching = searching;
