@@ -52,10 +52,13 @@
             </mat-error>
         </mat-form-field>
         <h3>Status</h3>
-        <mat-chip-list selectable multiple>
+        <mat-chip-list selectable multiple style="align-self: center;">
             <mat-chip #c="matChip" *ngFor="let chip of statusChips" color="primary" (click)="ToggleSelection(c)" 
             [selected]="chip.selected" style="cursor: pointer; font-size: small;">{{ chip.name }}</mat-chip>
         </mat-chip-list>
+        <mat-error *ngIf="f.statuses.hasError('required')">
+            Please select at least one status!
+        </mat-error>
         <h3>Source</h3>
         <mat-form-field appearance="outline"
                         [style.fontSize.px]="12"
@@ -126,13 +129,14 @@
         </div>
         </div>
         <h3>Search in</h3>
-        <div>
-            <section>
-                <mat-checkbox color="primary">title</mat-checkbox>
-                <mat-checkbox color="primary" style="margin-left: 4rem;">image</mat-checkbox>
-            </section>
-            <mat-checkbox color="primary">content</mat-checkbox>
+        <div fxLayout="row wrap" fxLayoutAlign="space-around">
+            <mat-checkbox *ngFor="let checkbox of searchCheckboxes" color="primary" 
+                [checked]="checkbox.checked" (change)="CheckedSearch($event, checkbox.name)">{{ checkbox.name }}
+            </mat-checkbox>
         </div>
+        <mat-error *ngIf="f.searchFields.hasError('required')">
+            Please select at least one search field!
+        </mat-error>
         <h3>Your filters:</h3>
         <mat-chip-list style="flex-wrap: wrap; max-width: 300px;">
             <mat-chip #c="matChip"
@@ -150,7 +154,7 @@
              fxLayoutAlign="space-between">
             <div></div>
             <button mat-raised-button
-                    color="primary" (click)="Filter()">FILTER</button>
+                    color="primary" (click)="Filter()" [disabled]="filterForm.invalid">FILTER</button>
         </div>
     </form>
 </div>

@@ -27,7 +27,7 @@ export class FilterComponent implements OnInit {
     sources: Source[] = [];
     statusChips: any = [];
     years: any = { lower: 1968, upper: 2021 };
-    sliderrange: any;
+    searchCheckboxes: any = [];
 
     constructor(private fb: FormBuilder, private infoService: InformationService) {
         infoService.Categories().subscribe(
@@ -49,17 +49,23 @@ export class FilterComponent implements OnInit {
                 data.forEach(status => {
                     this.statusChips.push({name: status, selected: true});
                     this.filters.push(`Status: ${status}`);
+                    this.filterForm.patchValue({'statuses': [...this.statusChips]});
                 });
             },
             error => { console.log("error") }
         );
+
+        this.searchCheckboxes = [{name: "title", checked: "true"}, {name: "image", checked: "true"},
+            {name: "content", checked: "true"}];
+        this.searchCheckboxes.forEach((search: any) => this.filters.push(`Search in: ${search['name']}`));
     }
 
     ngOnInit(): void {
         this.filterForm = this.fb.group({
             category: [''],
             source: [''],
-            statuses: [[...this.statusChips], Validators.required]
+            statuses: [[...this.statusChips], Validators.required],
+            searchFields: [[...this.searchCheckboxes], Validators.required]
         });
 
         this.filteredCategories = this.filterForm.controls['category'].valueChanges.pipe(
@@ -116,6 +122,17 @@ export class FilterComponent implements OnInit {
             var status = filter.split(": ")[1];
             var statusToChange = this.statusChips.filter((s: any) => s['name'] === status);
             statusToChange[0]['selected'] = false;
+
+            // remove from form
+            this.filterForm.controls.statuses.setValue(this.statusChips.filter((s: any) => s['selected']));
+        }
+
+        if (filter.indexOf("Search in") >= 0)
+        {
+            var search = filter.split(": ")[1];
+            var checkboxToChange = this.searchCheckboxes.filter((s: any) => s['name'] === search);
+            checkboxToChange[0]['checked'] = false;
+            this.filterForm.controls.searchFields.setValue(this.searchCheckboxes.filter((s: any) => s['checked']));
         }
     }
 
@@ -126,15 +143,16 @@ export class FilterComponent implements OnInit {
     }
 
     DisplayCategory(cat: Category): string {
-      return cat ? cat.name : "";
+        return cat ? cat.name : "";
     }
 
     DisplaySource(source: Source): string {
-      return source ? source.name : "";
+        return source ? source.name : "";
     }
 
     Filter()
     {
+        // todo
     }
 
     private _filter(list: any, name: any): any {
@@ -155,6 +173,22 @@ export class FilterComponent implements OnInit {
         var name = `Source: ${event.option.value.name}`;
         if (this.filters.indexOf(name) < 0)
             this.filters.push(name);
+    }
+
+    CheckedSearch(event: any, name: string)
+    {
+        var checked = this.searchCheckboxes.filter((c: any) => c.name === name);
+        checked[0]['checked'] = event.checked;
+        var nameToSearch = `Search in: ${name}`;
+
+        if (event.checked)
+        {
+            this.filters.push(nameToSearch);
+            this.filterForm.controls.searchFields.setValue(this.searchCheckboxes.filter((s: any) => s['checked']));
+        } else
+        {
+            this.Remove(nameToSearch);
+        }
     }
 }
 
