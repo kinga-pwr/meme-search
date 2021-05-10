@@ -103,7 +103,10 @@
                     style="max-height: 50px; max-width: 75px;">
                     <input type="number"
                         matInput
-                        [value]="years.lower" min="1968" [max]="years.upper">
+                        [ngModel]="years.lower"
+                        (ngModelChange)="years = {lower: $event, upper: years.upper}"
+                        min="1968" [max]="years.upper"
+                        [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
                 <span style="margin: 0.5rem;">-</span>
                 <mat-form-field appearance="outline"
@@ -112,7 +115,10 @@
                     style="max-height: 50px; max-width: 75px;">
                 <input type="number"
                     matInput
-                    [value]="years.upper" [min]="years.lower" max="2021">
+                    (ngModelChange)="years = {lower: years.lower, upper: $event}"
+                    [ngModel]="years.upper" 
+                    [ngModelOptions]="{standalone: true}"
+                    [min]="years.lower" max="2021">
             </mat-form-field>
         </div>
         </div>
