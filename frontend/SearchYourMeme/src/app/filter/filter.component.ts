@@ -23,7 +23,7 @@ export class FilterComponent implements OnInit {
     filteredCategories!: Observable<Category[]>;
     filteredSources!: Observable<Source[]>;
     filterForm!: FormGroup;
-    filters = ["Status: Confirmed", "Status: Submitted", "Status: Deadpool"];
+    filters: string[] = [];
     sources: Source[] = [];
     statusChips: any = [];
     years: any = { lower: 1968, upper: 2021 };
@@ -46,7 +46,10 @@ export class FilterComponent implements OnInit {
 
         infoService.Statuses().subscribe(
             data => {
-                data.forEach(status => this.statusChips.push({name: status, selected: true}));
+                data.forEach(status => {
+                    this.statusChips.push({name: status, selected: true});
+                    this.filters.push(`Status: ${status}`);
+                });
             },
             error => { console.log("error") }
         );
@@ -92,27 +95,42 @@ export class FilterComponent implements OnInit {
         chip.toggleSelected();
         var current: string[] = this.filterForm.get('statuses')!.value;
 
-        if (chip.selected)
+        if (chip.selected) {
             current.push(chip.value);
+            this.filters.push(`Status: ${chip.value}`);
+        }
         else {
             var idx = current.indexOf(chip.value);
             current.splice(idx, 1);
+            this.RemoveFromFilters(chip.value);
         }
 
         this.filterForm.controls.statuses.setValue(current);
     }
 
     Remove(filter: string) {
-        var idx = this.filters.indexOf(filter);
-        this.filters.splice(idx, 1);
+        this.RemoveFromFilters(filter);
+
+        if (filter.indexOf("Status") >= 0)
+        {
+            var status = filter.split(": ")[1];
+            var statusToChange = this.statusChips.filter((s: any) => s['name'] === status);
+            statusToChange[0]['selected'] = false;
+        }
+    }
+
+    RemoveFromFilters(filter: string)
+    {
+        var fullValue = this.filters.filter(f => f.indexOf(filter) >= 0)[0];
+        this.filters.splice(this.filters.indexOf(fullValue), 1);
     }
 
     DisplayCategory(cat: Category): string {
-      return cat ? `${cat.name} (${cat.quantity})` : "";
+      return cat ? cat.name : "";
     }
 
     DisplaySource(source: Source): string {
-      return source ? `${source.name} (${source.quantity})` : "";
+      return source ? source.name : "";
     }
 
     Filter()
@@ -123,6 +141,20 @@ export class FilterComponent implements OnInit {
         const filterValue = name.toLowerCase();
 
         return list.filter((item: any)=> item.name.toLowerCase().indexOf(filterValue) > -1);
+    }
+
+    SelectedCategory(event: any)
+    {
+        var name = `Category: ${event.option.value.name}`;
+        if (this.filters.indexOf(name) < 0)
+            this.filters.push(name);
+    }
+
+    SelectedSource(event: any)
+    {
+        var name = `Source: ${event.option.value.name}`;
+        if (this.filters.indexOf(name) < 0)
+            this.filters.push(name);
     }
 }
 

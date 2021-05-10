@@ -40,7 +40,8 @@
                 <mat-icon>close</mat-icon>
             </button>
             <mat-autocomplete autoActiveFirstOption
-                              #autoCategory="matAutocomplete" [displayWith]="DisplayCategory">
+                              #autoCategory="matAutocomplete" [displayWith]="DisplayCategory"
+                              (optionSelected)="SelectedCategory($event)">
                 <mat-option *ngFor="let category of filteredCategories | async"
                             [value]="category" [matTooltip]="category.name + ' (' + category.quantity + ')'" matTooltipPosition="right">
                     {{ category.name }} ({{ category.quantity }})
@@ -75,7 +76,9 @@
                 <mat-icon>close</mat-icon>
             </button>
             <mat-autocomplete autoActiveFirstOption
-                              #autoSource="matAutocomplete" [displayWith]="DisplaySource">
+                              #autoSource="matAutocomplete"
+                              (optionSelected)="SelectedSource($event)"
+                              [displayWith]="DisplaySource">
                 <mat-option *ngFor="let source of filteredSources | async"
                             [value]="source" [matTooltip]="source.name + ' (' + source.quantity + ')'" matTooltipPosition="right">
                         {{ source.name }} ({{ source.quantity }})
@@ -137,25 +140,8 @@
                       removable="true"
                       (removed)="Remove(chip)"
                       style="font-size: xx-small;"
-                      class="filters">
-                {{chip}}
-                <mat-icon matChipRemove>cancel</mat-icon>
-            </mat-chip>
-            <mat-chip #c="matChip"
-                      *ngFor="let chip of filters"
-                      removable="true"
-                      (removed)="Remove(chip)"
-                      style="font-size: xx-small;"
-                      class="filters">
-                {{chip}}
-                <mat-icon matChipRemove>cancel</mat-icon>
-            </mat-chip>
-            <mat-chip #c="matChip"
-                      *ngFor="let chip of filters"
-                      removable="true"
-                      (removed)="Remove(chip)"
-                      style="font-size: xx-small;"
-                      class="filters">
+                      class="filters"
+                      #chipList>
                 {{chip}}
                 <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
