@@ -24,10 +24,10 @@ export class FilterComponent implements OnInit {
     @ViewChild('chipList') chipList!: MatChipList;
     categories: Category[] = [];
     filteredCategories!: Observable<Category[]>;
-    filteredSources!: Observable<Source[]>;
+    filteredDetails!: Observable<Source[]>;
     filterForm!: FormGroup;
     filters: string[] = [];
-    sources: Source[] = [];
+    details: Source[] = [];
     statusChips: any = [];
     years: any = { lower: 1968, upper: 2021 };
     searchCheckboxes: any = [];
@@ -43,7 +43,7 @@ export class FilterComponent implements OnInit {
 
         infoService.Source().subscribe(
             data => {
-                this.sources = data;
+                this.details = data;
             },
             error => { console.log("error") }
         );
@@ -59,15 +59,19 @@ export class FilterComponent implements OnInit {
             error => { console.log("error") }
         );
 
-        this.searchCheckboxes = [{name: "Title", checked: "true"}, {name: "Image", checked: "true"},
-            {name: "Content", checked: "true"}];
+        this.searchCheckboxes = [
+            {name: "Title", checked: "true"}, 
+            {name: "Image", checked: "true"},
+            {name: "Content", checked: "true"},
+            {name: "Category", checked: "true"},
+            {name: "Details", checked: "true"}];
         this.searchCheckboxes.forEach((search: any) => this.filters.push(`Search in: ${search['name']}`));
     }
 
     ngOnInit(): void {
         this.filterForm = this.fb.group({
             category: [''],
-            source: [''],
+            details: [''],
             statuses: [[...this.statusChips], Validators.required],
             searchFields: [[...this.searchCheckboxes], Validators.required]
         });
@@ -78,10 +82,10 @@ export class FilterComponent implements OnInit {
             map(name => name ? this._filter(this.categories, name) : this.categories.slice(0, 10))
         );
 
-        this.filteredSources = this.filterForm.controls['source'].valueChanges.pipe(
+        this.filteredDetails = this.filterForm.controls['details'].valueChanges.pipe(
             startWith(''),
             map(value => typeof value === 'string' ? value : ''),
-            map(name => name ? this._filter(this.sources, name) : this.sources.slice(0, 10))
+            map(name => name ? this._filter(this.details, name) : this.details.slice(0, 10))
         );
     }
 
@@ -152,7 +156,7 @@ export class FilterComponent implements OnInit {
         return cat ? cat.name : "";
     }
 
-    DisplaySource(source: Source): string {
+    DisplayDetails(source: Source): string {
         return source ? source.name : "";
     }
 
@@ -165,12 +169,12 @@ export class FilterComponent implements OnInit {
     PrepareParams(): QueryParams {
         var params: QueryParams = {
             status: this.statusChips.filter((s: any) => s.selected).map((s: any) => s.name),
-            category: this.filters.filter(f => f.includes("Category")).map(f => f.split(": ")[1]),
-            details: this.filters.filter(f => f.includes("Source")).map(f => f.split(": ")[1]),
+            category: this.filters.filter(f => f.includes("Category:")).map(f => f.split(": ")[1]),
+            details: this.filters.filter(f => f.includes("Details:")).map(f => f.split(": ")[1]),
             yearFrom: this.years.lower,
             yearTo: this.years.upper,
             fields: this.searchCheckboxes.filter((s: any) => s.checked).map((s: any) => s.name),
-            sort: "Year",
+            sort: null,
             sortAsc: false,
         };
 
@@ -190,9 +194,9 @@ export class FilterComponent implements OnInit {
             this.filters.push(name);
     }
 
-    SelectedSource(event: any)
+    SelectedDetails(event: any)
     {
-        var name = `Source: ${event.option.value.name}`;
+        var name = `Details: ${event.option.value.name}`;
         if (this.filters.indexOf(name) < 0)
             this.filters.push(name);
     }

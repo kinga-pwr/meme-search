@@ -5,6 +5,6 @@ export interface QueryParams {
     yearFrom: number;
     yearTo: number;
     fields: string[];
-    sort: string;
+    sort?: string | null;
     sortAsc: boolean;
 }

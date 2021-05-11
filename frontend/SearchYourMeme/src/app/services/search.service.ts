@@ -19,7 +19,7 @@ export class SearchService extends HttpService {
 
         let params = new HttpParams().set("results", resultsCount.toString()).set("start", page.toString())
 
-        return await this.http.post<Meme[]>(this.BASE_URL + 'AdvancedSearch/' + text, queryParams, { params: params }).toPromise();
+        return await this.http.post<Meme[]>(this.BASE_URL + `AdvancedSearch${text === "" ? "" : "?query="}` + text, queryParams, { params: params }).toPromise();
     }
 
 

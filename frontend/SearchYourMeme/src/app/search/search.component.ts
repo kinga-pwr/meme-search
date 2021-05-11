@@ -24,16 +24,22 @@ export class SearchComponent implements OnInit {
 
     public page: number;
     public resultsCount: number;
+    public isAdvancedSearch: boolean;
+    public filterParams!: QueryParams;
 
     constructor(private searchService: SearchService, private scrollService: ScrollService,
         private advancedSearchService: AdvancedSearchService) {
         this.page = 0;
         this.resultsCount = 20;
+        this.isAdvancedSearch = false;
     }
     ngOnInit(): void {
         this.scrollService.scrollEvent.subscribe(() => {
             this.page+=this.resultsCount;
-            this.SearchNext();
+            if (this.isAdvancedSearch)
+                this.AdvancedSearchNext();
+            else
+                this.SearchNext();
         });
         this.advancedSearchService.advancedSearchEvent.subscribe(
             (params: QueryParams) => this.AdvanceSearch(params)
@@ -41,7 +47,10 @@ export class SearchComponent implements OnInit {
     }
 
     async AdvanceSearch(params: QueryParams) {
+        console.log(params);
         this.page = 0;
+        this.isAdvancedSearch = true;
+        this.filterParams = params;
         this.searching.emit(true);
         let result = await this.searchService.AdnvancedSearch(this.searchBox, params, this.page, this.resultsCount);
         this.memesEvent.emit(result);
@@ -49,6 +58,7 @@ export class SearchComponent implements OnInit {
 
     async Search() {
         this.page = 0;
+        this.isAdvancedSearch = false;
         this.searching.emit(true);
         let result = await this.searchService.Search(this.searchBox, this.page, this.resultsCount);
         this.memesEvent.emit(result);
@@ -58,6 +68,14 @@ export class SearchComponent implements OnInit {
     async SearchNext() {
         this.searching.emit(true);
         let result = await this.searchService.Search(this.searchBox, this.page, this.resultsCount);
+        this.appendMemesEvent.emit(result);
+    }
+
+    async AdvancedSearchNext() {
+        console.log(this.filterParams);
+        this.searching.emit(true);
+        let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams, 
+            this.page, this.resultsCount);
         this.appendMemesEvent.emit(result);
     }
 
