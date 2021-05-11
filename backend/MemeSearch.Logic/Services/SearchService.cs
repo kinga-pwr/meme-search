@@ -66,7 +66,7 @@ namespace MemeSearch.Logic.Services
             // STATUS
             if (parameters.Status?.Any() ?? false)
             {
-                queryParts.Add(q.Bool(f => f.Must(parameters.Status.Select(s => q.Term(t => t.Status, s)).ToArray())));
+                queryParts.Add(q.Bool(f => f.Should(parameters.Status.Select(s => q.Term(t => t.Status, s)).ToArray()).MinimumShouldMatch(1)));
             }
 
             // CATEGORY
