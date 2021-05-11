@@ -1,4 +1,4 @@
-<div>
+<div fxLayout="column">
     <img src="../assets/logo.png"
          width="500px"
          style="transform:rotate(4deg);" />
@@ -7,11 +7,11 @@
         <form id="search-form">
             <div class="search">
                 <input type="text"
-                       name="search"
-                       placeholder="Search..."
-                       class="round"
-                       [(ngModel)]="searchBox"
-                       (keyup.enter)="Search()" />
+                    name="search"
+                    placeholder="Search..."
+                    class="round"
+                    [(ngModel)]="searchBox"
+                    (keyup.enter)="Search()" />
 
                 <mat-icon class="corner">search</mat-icon>
             </div>
@@ -25,4 +25,5 @@
             <mat-icon>tune</mat-icon>
         </button>
     </div>
+    <button fxFlexAlign="flex-end" style="margin-right: 3rem;" mat-button (click)="OpenDialogWithImage()">Search by image</button>
 </div>

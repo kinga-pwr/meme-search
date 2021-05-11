@@ -1,7 +1,7 @@
 import { stringify } from '@angular/compiler/src/util';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatChip, MatChipList } from '@angular/material/chips';
+import { MatChip } from '@angular/material/chips';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -21,7 +21,6 @@ export class FilterComponent implements OnInit {
 
     @Input() inputDrawer!: MatDrawer;
     
-    @ViewChild('chipList') chipList!: MatChipList;
     categories: Category[] = [];
     filteredCategories!: Observable<Category[]>;
     filteredDetails!: Observable<Source[]>;
@@ -38,14 +37,14 @@ export class FilterComponent implements OnInit {
             data => {
                 this.categories = data;
             },
-            error => { console.log("error") }
+            error => { console.log(error) }
         );
 
         infoService.Source().subscribe(
             data => {
                 this.details = data;
             },
-            error => { console.log("error") }
+            error => { console.log(error) }
         );
 
         infoService.Statuses().subscribe(
@@ -56,7 +55,7 @@ export class FilterComponent implements OnInit {
                     this.filterForm.patchValue({'statuses': [...this.statusChips]});
                 });
             },
-            error => { console.log("error") }
+            error => { console.log(error) }
         );
 
         this.searchCheckboxes = [
@@ -101,8 +100,8 @@ export class FilterComponent implements OnInit {
         this.filterForm.patchValue({ category: '' });
     }
 
-    ClearSource() {
-        this.filterForm.patchValue({ source: '' });
+    ClearDetails() {
+        this.filterForm.patchValue({ details: '' });
     }
 
     ToggleSelection(chip: MatChip) {

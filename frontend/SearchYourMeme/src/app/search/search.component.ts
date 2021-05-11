@@ -6,6 +6,8 @@ import { QueryParams } from '../models/query-params.interface';
 import { SearchService } from '../services/search.service';
 import { ScrollService } from '../services/scroll.service';
 import { AdvancedSearchService } from '../services/advanced-search.service';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { ImageSearchDialogComponent } from '../image-search-dialog/image-search-dialog.component';
 
 @Component({
     selector: 'app-search',
@@ -28,7 +30,7 @@ export class SearchComponent implements OnInit {
     public filterParams!: QueryParams;
 
     constructor(private searchService: SearchService, private scrollService: ScrollService,
-        private advancedSearchService: AdvancedSearchService) {
+        private advancedSearchService: AdvancedSearchService, public dialog: MatDialog) {
         this.page = 0;
         this.resultsCount = 20;
         this.isAdvancedSearch = false;
@@ -81,6 +83,18 @@ export class SearchComponent implements OnInit {
 
     OpenDrawer() {
         this.inputDrawer.toggle()
+    }
+
+    OpenDialogWithImage()
+    {
+        const dialogRef = this.dialog.open(ImageSearchDialogComponent, {
+            width: '80vw'
+        });
+      
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+            console.log(result);
+        });
     }
 
 }

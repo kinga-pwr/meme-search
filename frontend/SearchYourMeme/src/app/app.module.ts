@@ -27,6 +27,8 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SearchComponent } from './search/search.component';
 import { TextSearchComponent } from './text-search/text-search.component';
+import { ImageSearchDialogComponent } from './image-search-dialog/image-search-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
     declarations: [
@@ -35,7 +37,8 @@ import { TextSearchComponent } from './text-search/text-search.component';
         MemeListItemComponent,
         MemeListComponent,
         TextSearchComponent,
-        FilterComponent
+        FilterComponent,
+        ImageSearchDialogComponent
     ],
     imports: [
         AppRoutingModule,
@@ -59,6 +62,7 @@ import { TextSearchComponent } from './text-search/text-search.component';
         MatSidenavModule,
         MatTooltipModule,
         ReactiveFormsModule,
+        MatDialogModule,
         IonicModule.forRoot(),
     ],
     providers: [],

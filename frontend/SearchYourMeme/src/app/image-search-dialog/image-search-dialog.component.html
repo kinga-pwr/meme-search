@@ -1,0 +1,36 @@
+
+<h1 mat-dialog-title>Load image for search</h1>
+<div mat-dialog-content fxLayout="column" fxLayoutGap="2rem">
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
+        <mat-form-field appearance="outline"
+            [style.fontSize.px]="12"
+            color="primary"
+            fxFlex="80%"
+            fxFlexAlign="center">
+            <input type="url"
+                matInput
+                [formControl]="url">
+            <button mat-button
+                *ngIf="url.value"
+                matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                (click)="Clear()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+        <button mat-raised-button color="primary" [disabled]="url.invalid" (click)="imageVisible = true">Load</button>
+    </div>
+    <div fxLayout="column" fxLayoutAlign="flex-start">
+        <span *ngIf="imageVisible" style="padding-left: 6rem;">Preview:</span>
+        <img *ngIf="imageVisible" fxFlexAlign="center" weight="60%" [src]="url.value"
+            alt="Meme Photo"/>
+        <img *ngIf="!imageVisible" fxFlexAlign="center" weight="60%" style="opacity: 0%;"
+            src="https://i.kym-cdn.com/entries/icons/original/000/023/701/269.jpg"
+            alt="Meme Photo"/>
+    </div>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-stroked-button mat-dialog-close color="">Cancel</button>
+    <button mat-raised-button mat-dialog-close color="primary" cdkFocusInitial [disabled]="!imageVisible">Search</button>
+</div>
