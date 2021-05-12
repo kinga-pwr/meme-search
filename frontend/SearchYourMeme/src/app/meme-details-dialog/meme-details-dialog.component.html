@@ -1,3 +1,28 @@
 <div>
-    
+    <h1 class="title">
+        {{meme.title}}
+    </h1>
+
+    <div class="content"
+         fxLayout="row"
+         fxLayoutAlign="start stretch">
+        <div class="details"
+             div
+             fxLayout="column"
+             fxLayoutAlign="center start">
+            <div class="image">
+                <img src="{{meme.imageUrl}}" />
+            </div>
+            <div class="info">
+                <p>Status: {{meme.status}}</p>
+                <p>Origin: {{meme.details}}</p>
+                <p>Year: {{meme.year}}</p>
+                <p>Categories: <span *ngFor="let category of meme.categories">{{category}} </span></p>
+
+            </div>
+        </div>
+        <div class="description">
+            {{meme.content}}
+        </div>
+    </div>
 </div>

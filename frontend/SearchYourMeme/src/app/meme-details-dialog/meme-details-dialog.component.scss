@@ -1,0 +1,29 @@
+.image img {
+    max-height: 450px;
+    max-width: 450px;
+}
+.description {
+    padding: 15px 15px 20px 15px;
+    background: #616e7c54;
+    margin-left: 10px;
+    font-size: 15pt;
+    overflow-y: auto;
+    max-height: 700px;
+    height: fit-content;
+    place-self: center;
+}
+.info {
+    font-size: 16pt;
+    padding: 15px 0px 0px 15px;
+}
+.title {
+    // padding-left: 15px;
+    font-size: 30pt;
+    letter-spacing: 0.1em;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke-width: 3px;
+    -webkit-text-stroke-color: white;
+    text-shadow: 8px 8px #ff1f8f, 20px 20px #00000000;
+    overflow-wrap: anywhere;
+    text-align-last: center;
+}

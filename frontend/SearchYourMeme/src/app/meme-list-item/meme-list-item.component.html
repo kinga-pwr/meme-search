@@ -1,6 +1,6 @@
 <mat-card class="card"
           *ngIf="meme != null">
-    <mat-card-header>
+    <mat-card-header (click)="OpenDetails()">
         <mat-card-title style="word-wrap: break-word; overflow-wrap: anywhere; height:50px">{{meme.title}}
         </mat-card-title>
     </mat-card-header>
