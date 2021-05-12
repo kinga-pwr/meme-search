@@ -21,11 +21,13 @@ export class MemeListComponent implements OnInit {
         fromEvent(this._div.nativeElement, 'scroll')
             .subscribe((e: any) => {
                 if (e.target['scrollTop'] > this.lastScroll) {
-                    if (e.target['scrollTop'] - document.body.offsetHeight >= -20) {
+                    console.log('scrollTop' + e.target['scrollTop'] + ' |   scrollHeight' + e.target['scrollHeight'])
+                    
+                    if (e.target['scrollHeight'] - e.target['scrollTop'] >= 800 && e.target['scrollHeight'] - e.target['scrollTop'] <= 810) {
                         this.counter++;
-                        if (this.counter % 4 == 0) {
+                        // if (this.counter % 4 == 0) {
                             this.scrollService.Scrolled();
-                        }
+                        // }
                     }
                 }
                 this.lastScroll = e.target['scrollTop']

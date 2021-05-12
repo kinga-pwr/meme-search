@@ -6,7 +6,7 @@ import { QueryParams } from '../models/query-params.interface';
 import { SearchService } from '../services/search.service';
 import { ScrollService } from '../services/scroll.service';
 import { AdvancedSearchService } from '../services/advanced-search.service';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ImageSearchDialogComponent } from '../image-search-dialog/image-search-dialog.component';
 
 @Component({
@@ -37,46 +37,48 @@ export class SearchComponent implements OnInit {
     }
     ngOnInit(): void {
         this.scrollService.scrollEvent.subscribe(() => {
-            this.page+=this.resultsCount;
-            if (this.isAdvancedSearch)
-                this.AdvancedSearchNext();
-            else
-                this.SearchNext();
+            this.page += this.resultsCount;
+            // if (this.isAdvancedSearch)
+            this.AdvancedSearchNext();
+            // else
+            //     this.SearchNext();
         });
         this.advancedSearchService.advancedSearchEvent.subscribe(
-            (params: QueryParams) => this.AdvanceSearch(params)
+            (obj: {params: QueryParams, first: boolean}) => {
+                this.filterParams = obj.params;
+                if (!obj.first) {
+                    this.AdvanceSearch();
+                }
+            }
         );
     }
 
-    async AdvanceSearch(params: QueryParams) {
-        console.log(params);
+    async AdvanceSearch() {
         this.page = 0;
         this.isAdvancedSearch = true;
-        this.filterParams = params;
         this.searching.emit(true);
-        let result = await this.searchService.AdnvancedSearch(this.searchBox, params, this.page, this.resultsCount);
+        let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams, this.page, this.resultsCount);
         this.memesEvent.emit(result);
     }
 
-    async Search() {
-        this.page = 0;
-        this.isAdvancedSearch = false;
-        this.searching.emit(true);
-        let result = await this.searchService.Search(this.searchBox, this.page, this.resultsCount);
-        this.memesEvent.emit(result);
-    }
+    // async Search() {
+    //     this.page = 0;
+    //     this.isAdvancedSearch = false;
+    //     this.searching.emit(true);
+    //     let result = await this.searchService.Search(this.searchBox, this.page, this.resultsCount);
+    //     this.memesEvent.emit(result);
+    // }
 
 
-    async SearchNext() {
-        this.searching.emit(true);
-        let result = await this.searchService.Search(this.searchBox, this.page, this.resultsCount);
-        this.appendMemesEvent.emit(result);
-    }
+    // async SearchNext() {
+    //     this.searching.emit(true);
+    //     let result = await this.searchService.Search(this.searchBox, this.page, this.resultsCount);
+    //     this.appendMemesEvent.emit(result);
+    // }
 
     async AdvancedSearchNext() {
-        console.log(this.filterParams);
         this.searching.emit(true);
-        let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams, 
+        let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams,
             this.page, this.resultsCount);
         this.appendMemesEvent.emit(result);
     }
@@ -85,12 +87,11 @@ export class SearchComponent implements OnInit {
         this.inputDrawer.toggle()
     }
 
-    OpenDialogWithImage()
-    {
+    OpenDialogWithImage() {
         const dialogRef = this.dialog.open(ImageSearchDialogComponent, {
             width: '80vw'
         });
-      
+
         dialogRef.afterClosed().subscribe(result => {
             console.log('The dialog was closed');
             console.log(result);

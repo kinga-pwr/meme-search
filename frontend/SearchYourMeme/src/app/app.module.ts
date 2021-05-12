@@ -29,6 +29,7 @@ import { SearchComponent } from './search/search.component';
 import { TextSearchComponent } from './text-search/text-search.component';
 import { ImageSearchDialogComponent } from './image-search-dialog/image-search-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { MemeDetailsDialogComponent } from './meme-details-dialog/meme-details-dialog.component';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import {MatDialogModule} from '@angular/material/dialog';
         MemeListComponent,
         TextSearchComponent,
         FilterComponent,
-        ImageSearchDialogComponent
+        ImageSearchDialogComponent,
+        MemeDetailsDialogComponent
     ],
     imports: [
         AppRoutingModule,

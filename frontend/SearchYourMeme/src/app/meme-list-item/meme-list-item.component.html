@@ -5,20 +5,22 @@
         </mat-card-title>
     </mat-card-header>
     <img mat-card-image
+         class="card-image"
+         (click)="OpenDetails()"
          [src]="meme.imageUrl"
          alt="Meme Title">
-    <mat-card-content>
+    <mat-card-content class="card-content">
 
         <mat-chip-list class="example-chip"
                        cdkDropList
                        cdkDropListOrientation="horizontal">
+            <mat-chip color="accent"
+                      selected>{{meme.year}}</mat-chip>
             <mat-chip class="example-box"
                       cdkDrag
                       *ngFor="let category of meme.categories">
                 {{category}}
             </mat-chip>
-            <mat-chip color="accent"
-                      selected>{{meme.year}}</mat-chip>
 
         </mat-chip-list>
     </mat-card-content>

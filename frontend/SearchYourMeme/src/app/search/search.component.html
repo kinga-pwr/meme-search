@@ -7,13 +7,22 @@
         <form id="search-form">
             <div class="search">
                 <input type="text"
-                    name="search"
-                    placeholder="Search..."
-                    class="round"
-                    [(ngModel)]="searchBox"
-                    (keyup.enter)="Search()" />
+                       name="search"
+                       placeholder="Search..."
+                       class="round"
+                       [(ngModel)]="searchBox"
+                       (keyup.enter)="AdvanceSearch()" />
 
-                <mat-icon class="corner">search</mat-icon>
+                <button mat-icon-button
+                        #searchbtn
+                        color="primary"
+                        (click)="AdvanceSearch()"
+                        class="corner"
+                        matTooltip="Search"
+                        matTooltipPosition="above">
+                    <mat-icon>search</mat-icon>
+                </button>
+
             </div>
         </form>
         <button mat-icon-button
@@ -25,5 +34,8 @@
             <mat-icon>tune</mat-icon>
         </button>
     </div>
-    <button fxFlexAlign="flex-end" style="margin-right: 3rem;" mat-button (click)="OpenDialogWithImage()">Search by image</button>
+    <button fxFlexAlign="flex-end"
+            style="margin-right: 3rem;"
+            mat-button
+            (click)="OpenDialogWithImage()">Search by image</button>
 </div>

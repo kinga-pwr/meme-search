@@ -1,6 +1,8 @@
 import { HostListener, Input } from '@angular/core';
 import { AfterViewInit } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MemeDetailsDialogComponent } from '../meme-details-dialog/meme-details-dialog.component';
 import { Meme } from '../models/meme';
 
 @Component({
@@ -11,7 +13,7 @@ import { Meme } from '../models/meme';
 export class MemeListItemComponent implements OnInit, AfterViewInit {
 
     @Input() meme!: Meme;
-    constructor() {
+    constructor(public dialog: MatDialog) {
 
     }
 
@@ -22,8 +24,16 @@ export class MemeListItemComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
 
     }
-    @HostListener('window:scroll', ['$event']) onScrollEvent($event: any) {
-        console.log($event);
-        console.log("scrolling");
+
+    OpenDetails() {
+        const dialogRef = this.dialog.open(MemeDetailsDialogComponent, {
+            width: '80vw',
+            data: this.meme
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+            console.log(result);
+        });
     }
 }

@@ -6,9 +6,9 @@ import { QueryParams } from '../models/query-params.interface';
 })
 export class AdvancedSearchService {
 
-    @Output() advancedSearchEvent = new EventEmitter<QueryParams>();
+    @Output() advancedSearchEvent = new EventEmitter<{params: QueryParams, first: boolean}>();
 
-    Search(params: QueryParams) {
-        this.advancedSearchEvent.emit(params);
+    Search(params: QueryParams, first = false) {
+        this.advancedSearchEvent.emit({params, first});
     }
 }
