@@ -1,38 +1,16 @@
-﻿using Nest;
-
-namespace MemeSearch.Logic.Models
+﻿namespace MemeSearch.Logic.Models
 {
-    [ElasticsearchType(RelationName = "meme")]
-    public class Meme
+    public class MemeDto
     {
-        [Keyword(Normalizer= "keywords")]
         public string Title { get; set; }
-
-        [Text]
         public string Content { get; set; }
-
-        [Text]
-        public string ContentToSearch { get; set; }
-
-        [Text]
         public string ImageUrl { get; set; }
-
-        [Text]
         public string ImageTags { get; set; }
-
-        [Keyword(Normalizer = "keywords")]
         public string Status { get; set; }
-
-        [Text]
         public string Details { get; set; }
-
-        [Number]
         public int Year { get; set; }
-
-        [Text]
         public string Category { get; set; }
-        
-        [Text]
         public string Url { get; set; }
+        public string ContentHighlight { get; set; }
     }
 }

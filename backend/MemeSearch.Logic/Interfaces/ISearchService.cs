@@ -5,9 +5,9 @@ namespace MemeSearch.Logic.Interfaces
 {
     public interface ISearchService
     {
-        IEnumerable<Meme> StandardSearch(string query, int results, int start);
-        IEnumerable<Meme> AdvancedSearch(SearchParameters parameters, string query, int results, int start);
-        IEnumerable<Meme> ImageSearch(ImageSearchParameters parameters, int results, int start);
+        IEnumerable<MemeDto> StandardSearch(string query, int results, int start);
+        IEnumerable<MemeDto> AdvancedSearch(SearchParameters parameters, string query, int results, int start);
+        IEnumerable<MemeDto> ImageSearch(ImageSearchParameters parameters, int results, int start);
         bool CanImageSearch();
     }
 }

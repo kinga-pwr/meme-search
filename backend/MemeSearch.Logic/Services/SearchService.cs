@@ -21,22 +21,22 @@ namespace MemeSearch.Logic.Services
             _imageDetectService = imageDetectService;
         }
 
-        public IEnumerable<Meme> StandardSearch(string query, int results, int start)
+        public IEnumerable<MemeDto> StandardSearch(string query, int results, int start)
         {
             return Search(GetStandardQuery, query, new SearchParameters(), results, start);
         }
 
-        public IEnumerable<Meme> AdvancedSearch(SearchParameters parameters, string query, int results, int start)
+        public IEnumerable<MemeDto> AdvancedSearch(SearchParameters parameters, string query, int results, int start)
         {
             return Search(GetAdvancedQuery, query, parameters, results, start);
         }
 
-        public IEnumerable<Meme> ImageSearch(ImageSearchParameters parameters, int results, int start)
+        public IEnumerable<MemeDto> ImageSearch(ImageSearchParameters parameters, int results, int start)
         {
             var imageTags = _imageDetectService.GetImageTags(parameters.Url).Result;
             
             if (imageTags == null) return null;
-            if (string.IsNullOrWhiteSpace(imageTags)) return Enumerable.Empty<Meme>();
+            if (string.IsNullOrWhiteSpace(imageTags)) return Enumerable.Empty<MemeDto>();
 
             if (!parameters.SearchSimilarities)
             {
@@ -93,7 +93,7 @@ namespace MemeSearch.Logic.Services
         }
 
         #region Search
-        private IEnumerable<Meme> Search(Func<QueryContainerDescriptor<Meme>, string, SearchParameters, QueryContainer> getQuery, 
+        private IEnumerable<MemeDto> Search(Func<QueryContainerDescriptor<Meme>, string, SearchParameters, QueryContainer> getQuery, 
             string query, SearchParameters parameters, int results, int start)
         {
 
@@ -107,7 +107,7 @@ namespace MemeSearch.Logic.Services
                     .PostTags("</highlight>")
                     .Encoder(HighlighterEncoder.Html)
                     .HighlightQuery(q => HighlightSearch(q, query, parameters))
-                    .Fields(f => f.Field(fl => fl.Content)
+                    .Fields(f => f.Field(fl => fl.ContentToSearch)
                                     .Type("plain")
                                     .ForceSource()
                                     .FragmentSize(150)
@@ -116,10 +116,18 @@ namespace MemeSearch.Logic.Services
                                     .NoMatchSize(150)))
                 .Sort(s => GetSorting(s, parameters.Sort, parameters.SortAsc)));
 
-            return result.Documents.Select((d, idx) =>
+            return result.Documents.Select(d => new MemeDto()
             {
-                d.ContentHighlight = result.Hits.Select(h => h.Highlight.Any() ? string.Join(" ... ", h.Highlight.First().Value) : null).FirstOrDefault();
-                return d;
+                Title = d.Title,
+                Content = d.Content,
+                ImageUrl = d.ImageUrl,
+                ImageTags = d.ImageTags,
+                Status = d.Status,
+                Details = d.Details,
+                Year = d.Year,
+                Category = d.Category,
+                Url = d.Url,
+                ContentHighlight = result.Hits.Select(h => h.Highlight.Any() ? string.Join(" ... ", h.Highlight.First().Value) : null).FirstOrDefault()
             });
         }
 
@@ -288,11 +296,11 @@ namespace MemeSearch.Logic.Services
         {
             return IsPhrase(searchWord) 
                 ? q.MatchPhrase(c => c
-                    .Field(p => p.Content)
+                    .Field(p => p.ContentToSearch)
                     .Analyzer("standard")
                     .Query(searchWord.Trim('"'))
                     .Slop(2))
-                : q.Term(t => t.Content, searchWord);
+                : q.Term(t => t.ContentToSearch, searchWord);
         }
         #endregion
 
@@ -321,7 +329,7 @@ namespace MemeSearch.Logic.Services
             return name switch
             {
                 "Title" => f => f.Title,
-                "Content" => f => f.Content,
+                "Content" => f => f.ContentToSearch,
                 "Category" => f => f.Category,
                 "Details" => f => f.Details,
                 "Image" => f => f.ImageTags,
