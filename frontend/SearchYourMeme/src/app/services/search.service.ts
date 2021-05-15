@@ -2,12 +2,11 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { HttpService } from './http.service';
 import { Injectable } from '@angular/core';
 import { Meme } from '../models/meme';
-import { QueryParams } from '../models/query-params.interface';
+import { ImageQueryParams, QueryParams } from '../models/query-params.interface';
 @Injectable({
     providedIn: 'root'
 })
 export class SearchService extends HttpService {
-
     // async Search(text: string, page: number, resultsCount: number): Promise<Meme[]> {
 
     //     let params = new HttpParams().set("results", resultsCount.toString()).set("start", page.toString())
@@ -21,10 +20,19 @@ export class SearchService extends HttpService {
         let params = new HttpParams().set('query', text).set("results", resultsCount.toString()).set("start", page.toString());
         const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-        console.log({ service: 'SearchService', method: 'AdnvancedSearch', params: [text, page, resultsCount] });
+        console.log({ service: 'SearchService', method: 'AdvancedSearch', params: [text, page, resultsCount] });
 
         return await this.http.post<Meme[]>(`${this.BASE_URL}AdvancedSearch`, queryParams, { params: params, headers: headers }).toPromise();
     }
 
+    async ImageSearch(text: string, queryParams: ImageQueryParams, page: number, resultsCount: number): Promise<Meme[]> {
+        // todo add query
+        let params = new HttpParams().set("results", resultsCount.toString()).set("start", page.toString());
+        const headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+        console.log({ service: 'SearchService', method: 'ImageSearch', params: [text, page, resultsCount] });
+
+        return await this.http.post<Meme[]>(`${this.BASE_URL}ImageSearch`, queryParams, { params: params, headers: headers }).toPromise();
+    }
 
 }

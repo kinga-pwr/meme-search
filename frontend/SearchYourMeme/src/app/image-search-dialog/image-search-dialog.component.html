@@ -1,7 +1,7 @@
 
 <h1 mat-dialog-title>Load image for search</h1>
-<div mat-dialog-content fxLayout="column" fxLayoutGap="2rem">
-    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
+<div mat-dialog-content fxLayout="column">
+    <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="2rem">
         <mat-form-field appearance="outline"
             [style.fontSize.px]="12"
             color="primary"
@@ -18,19 +18,22 @@
                 (click)="Clear()">
                 <mat-icon>close</mat-icon>
             </button>
+            <mat-error *ngIf="url.invalid">Plese type right url!</mat-error>
         </mat-form-field>
-        <button mat-raised-button color="primary" [disabled]="url.invalid" (click)="imageVisible = true">Load</button>
+        <button mat-raised-button color="primary" class="load-btn" 
+        [disabled]="url.invalid" (click)="imageVisible = true">Load</button>
     </div>
     <div fxLayout="column" fxLayoutAlign="flex-start">
         <span *ngIf="imageVisible" style="padding-left: 6rem;">Preview:</span>
-        <img *ngIf="imageVisible" fxFlexAlign="center" weight="60%" [src]="url.value"
-            alt="Meme Photo"/>
-        <img *ngIf="!imageVisible" fxFlexAlign="center" weight="60%" style="opacity: 0%;"
+        <img *ngIf="imageVisible" fxFlexAlign="center" weight="50%" [src]="url.value" (error)="LoadError()" class="image"/>
+        <span *ngIf="!imageVisible" style="padding-left: 6rem;" style="opacity: 0%;">Preview:</span>
+        <img *ngIf="!imageVisible" fxFlexAlign="center" weight="50%" style="opacity: 0%;" class="image"
             src="https://i.kym-cdn.com/entries/icons/original/000/023/701/269.jpg"
-            alt="Meme Photo"/>
+            alt="Photo"/>
     </div>
 </div>
 <div mat-dialog-actions align="end">
-    <button mat-stroked-button mat-dialog-close color="">Cancel</button>
-    <button mat-raised-button mat-dialog-close color="primary" cdkFocusInitial [disabled]="!imageVisible">Search</button>
+    <button mat-stroked-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button mat-dialog-close color="primary" [disabled]="url.invalid || !imageVisible"
+    [mat-dialog-close]="url.value">Search</button>
 </div>

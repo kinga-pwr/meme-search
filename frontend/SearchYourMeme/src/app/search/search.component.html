@@ -34,8 +34,18 @@
             <mat-icon>tune</mat-icon>
         </button>
     </div>
-    <button fxFlexAlign="flex-end"
-            style="margin-right: 3rem;"
-            mat-button
-            (click)="OpenDialogWithImage()">Search by image</button>
+    <div fxLayout="row"
+         fxLayoutAlign="space-around center">
+        <mat-chip *ngIf="filterParams && filterParams.url" class="image-chip"
+            (removed)="RemoveSearchImageChip()">
+            Image search
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+        <mat-chip *ngIf="!filterParams || !filterParams.url" class="image-chip-hide">Image search
+        </mat-chip>
+        <button fxFlexAlign="flex-end"
+                style="margin-right: 2rem;"
+                mat-button
+                (click)="OpenDialogWithImage()">Search by image</button>
+    </div>
 </div>

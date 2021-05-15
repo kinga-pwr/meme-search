@@ -22,4 +22,10 @@ export class ImageSearchDialogComponent implements OnInit {
     this.imageVisible = false;
   }
 
+  LoadError()
+  {
+    this.imageVisible = false;
+    this.url.setErrors({'incorrect': true});
+  }
+
 }

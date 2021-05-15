@@ -8,3 +8,8 @@ export interface QueryParams {
     sort?: string | null;
     sortAsc: boolean;
 }
+
+export interface ImageQueryParams extends QueryParams {
+    url: string;
+    searchSimilarities: boolean;
+}
