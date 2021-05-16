@@ -31,19 +31,23 @@ namespace MemeSearch.Logic.Services
             return Search(GetAdvancedQuery, query, parameters, results, start);
         }
 
-        public IEnumerable<MemeDto> ImageSearch(ImageSearchParameters parameters, int results, int start)
+        public ImageSearchResult ImageSearch(ImageSearchParameters parameters, int results, int start)
         {
             var imageTags = _imageDetectService.GetImageTags(parameters.Url).Result;
             
             if (imageTags == null) return null;
-            if (string.IsNullOrWhiteSpace(imageTags)) return Enumerable.Empty<MemeDto>();
+            if (string.IsNullOrWhiteSpace(imageTags)) return new ImageSearchResult(); 
 
             if (!parameters.SearchSimilarities)
             {
                 imageTags = $"\"{imageTags.Replace(" AND ", " ")}\"";
             }
 
-            return Search(GetAdvancedQuery, imageTags, parameters, results, start);
+            return new ImageSearchResult()
+            {
+                Tags = imageTags,
+                Memes = Search(GetAdvancedQuery, imageTags, parameters, results, start)
+            };
         }
 
         public bool CanImageSearch() => _imageDetectService.IsAvailable;
