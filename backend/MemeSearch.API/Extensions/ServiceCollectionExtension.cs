@@ -35,6 +35,16 @@ namespace MemeSearch.API.Extensions
 
             var client = new ElasticClient(connectionSettings);
 
+            if (configuration["Elasticsearch:Url"].Contains("elastic"))
+            {
+                var attempts = 0;
+
+                while (!client.Ping().IsValid && attempts++ < 10)
+                {
+                    Thread.Sleep(15000);
+                }
+            }
+
             if (!client.Ping().IsValid)
             {
                 Log.Error("Can't connect to Elasticsearch engine on " + configuration["Elasticsearch:Url"]);
