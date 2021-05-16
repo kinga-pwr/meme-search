@@ -8,6 +8,7 @@ import { ScrollService } from '../services/scroll.service';
 import { AdvancedSearchService } from '../services/advanced-search.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ImageSearchDialogComponent } from '../image-search-dialog/image-search-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-search',
@@ -29,7 +30,8 @@ export class SearchComponent implements OnInit {
     public filterParams!: any;
 
     constructor(private searchService: SearchService, private scrollService: ScrollService,
-        private advancedSearchService: AdvancedSearchService, public dialog: MatDialog) {
+        private advancedSearchService: AdvancedSearchService, public dialog: MatDialog,
+        private _snackBar: MatSnackBar) {
         this.page = 0;
         this.resultsCount = 20;
     }
@@ -40,13 +42,7 @@ export class SearchComponent implements OnInit {
         });
         this.advancedSearchService.advancedSearchEvent.subscribe(
             (obj: {params: QueryParams, first: boolean}) => {
-                if (this.IsImageSearch())
-                {
-                    var updatedFilters = {...obj.params, url: this.filterParams.url, searchSimilarities: true};
-                    this.filterParams = updatedFilters;
-                }
-                else
-                    this.filterParams = obj.params;
+                this.filterParams = obj.params;
                 if (!obj.first) {
                     this.AdvanceSearch();
                 }
@@ -57,22 +53,35 @@ export class SearchComponent implements OnInit {
     async AdvanceSearch() {
         this.page = 0;
         this.searching.emit(true);
-        var result = null;
         if (this.IsImageSearch())
-            result = await this.searchService.ImageSearch(this.searchBox, this.filterParams, this.page, this.resultsCount);
-        else
-            result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams, this.page, this.resultsCount);
-        this.memesEvent.emit(result);
+        {
+            let img_res = await this.searchService.ImageSearch(this.searchBox, this.filterParams, 
+                this.page, this.resultsCount);
+            if (!img_res.tags)
+            {
+                this.OpenSnackBar("Can not recognize the image", "OK");
+            } else {
+                this.searchBox = img_res.tags;
+                this.memesEvent.emit(img_res.memes);
+            }
+            this.RemoveImageFromFilters();
+        }
+        else {
+            let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams,
+                this.page, this.resultsCount);
+            this.memesEvent.emit(result);
+        }
+        this.OpenDrawerIfClose();
     }
 
     IsImageSearch(): boolean {
         return this.filterParams && this.filterParams.url;
     }
 
-    RemoveSearchImageChip()
+    RemoveImageFromFilters()
     {
         delete this.filterParams.url; // a'la cast
-        this.advancedSearchService.Search(this.filterParams);
+        delete this.filterParams.searchSimilarities; // a'la cast
     }
 
     // async Search() {
@@ -92,16 +101,36 @@ export class SearchComponent implements OnInit {
 
     async AdvancedSearchNext() {
         this.searching.emit(true);
-        var result = null;
         if (this.IsImageSearch())
-            result = await this.searchService.ImageSearch(this.searchBox, this.filterParams, this.page, this.resultsCount);
-        else
-            result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams, this.page, this.resultsCount);
-        this.appendMemesEvent.emit(result);
+        {
+            let img_res = await this.searchService.ImageSearch(this.searchBox, this.filterParams, 
+                this.page, this.resultsCount);
+            if (!img_res.tags)
+            {
+                this.OpenSnackBar("Can not recognize the image", "OK");
+            } else {
+                this.searchBox = img_res.tags;
+                this.appendMemesEvent.emit(img_res.memes);
+            }
+            this.RemoveImageFromFilters();
+        }
+        else {
+            let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams,
+                this.page, this.resultsCount);
+            this.appendMemesEvent.emit(result);
+        }
     }
 
-    OpenDrawer() {
-        this.inputDrawer.toggle()
+    OpenDrawerIfClose() {
+        if (!this.inputDrawer.opened)
+            this.inputDrawer.open();
+    }
+
+    OpenSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, {
+            horizontalPosition: "end",
+            verticalPosition: "top"
+        });
     }
 
     OpenDialogWithImage() {

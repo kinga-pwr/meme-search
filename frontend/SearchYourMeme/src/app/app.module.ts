@@ -30,6 +30,7 @@ import { TextSearchComponent } from './text-search/text-search.component';
 import { ImageSearchDialogComponent } from './image-search-dialog/image-search-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { MemeDetailsDialogComponent } from './meme-details-dialog/meme-details-dialog.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
     declarations: [
@@ -65,6 +66,7 @@ import { MemeDetailsDialogComponent } from './meme-details-dialog/meme-details-d
         MatTooltipModule,
         ReactiveFormsModule,
         MatDialogModule,
+        MatSnackBarModule,
         IonicModule.forRoot(),
     ],
     providers: [],
