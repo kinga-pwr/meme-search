@@ -1,14 +1,23 @@
 <mat-card class="card"
+          (click)="OpenDetails()"
+          (mouseover)='mouseOver=true'
+          (mouseout)='mouseOver=false'
           *ngIf="meme != null">
-    <mat-card-header (click)="OpenDetails()">
+    <mat-card-header>
         <mat-card-title style="word-wrap: break-word; overflow-wrap: anywhere; height:50px">{{meme.title}}
         </mat-card-title>
     </mat-card-header>
-    <img mat-card-image
-         class="card-image"
-         (click)="OpenDetails()"
-         [src]="meme.imageUrl"
-         alt="Meme Title">
+
+    <div class="container">
+        <img mat-card-image
+             class="card-image "
+             [src]="meme.imageUrl"
+             alt="Meme Title">
+        <div class="overlay">
+            <div [innerHTML]="meme.contentHighlight"
+                 class="text"></div>
+        </div>
+    </div>
     <mat-card-content class="card-content">
 
         <mat-chip-list class="example-chip"

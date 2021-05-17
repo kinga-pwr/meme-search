@@ -1,3 +1,4 @@
+curl -X DELETE localhost:9200/memes 
 # SearchYourMeme
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.3.

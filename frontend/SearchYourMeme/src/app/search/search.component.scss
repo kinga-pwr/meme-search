@@ -1,15 +1,20 @@
-.round {
+input, .round {
     width: 100%;
     border-radius: 150px;
-    border: 1px #000 solid;
+    border: none;
     padding: 5px 5px 5px 25px;
     position: absolute;
     top: 0;
     left: 0;
     z-index: 5;
     height: inherit;
+    background: #227aa1 !important;
+    color: #fff;
+    box-shadow: 5px 3px 4px black;
 }
-
+::placeholder {
+    color: rgb(201, 201, 201);
+}
 .corner {
     position: absolute;
     top: 2px;
@@ -19,7 +24,7 @@
     z-index: 10;
     border-radius: 10px;
     border: none;
-    color: black; /* Set the bg image here. with "no-repeat" */
+    color: rgb(255, 255, 255); /* Set the bg image here. with "no-repeat" */
 }
 
 .search {
@@ -29,8 +34,8 @@
 }
 
 .filter-btn {
-    margin-left: 2.5rem; 
-    margin-top: 0.5rem; 
+    margin-left: 2.5rem;
+    margin-top: 0.5rem;
     color: white;
     visibility: hidden;
 }

@@ -107,8 +107,8 @@ namespace MemeSearch.Logic.Services
                 .TrackScores(true)
                 .Query(q => getQuery(q, query, parameters))
                 .Highlight(h => h
-                    .PreTags("<highlight>")
-                    .PostTags("</highlight>")
+                    .PreTags("<mark>")
+                    .PostTags("</mark>")
                     .Encoder(HighlighterEncoder.Html)
                     .HighlightQuery(q => HighlightSearch(q, query, parameters))
                     .Fields(f => f.Field(fl => fl.ContentToSearch)

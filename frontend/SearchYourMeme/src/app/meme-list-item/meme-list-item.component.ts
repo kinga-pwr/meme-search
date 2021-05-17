@@ -13,8 +13,9 @@ import { Meme } from '../models/meme';
 export class MemeListItemComponent implements OnInit, AfterViewInit {
 
     @Input() meme!: Meme;
+    mouseOver: boolean;
     constructor(public dialog: MatDialog) {
-
+        this.mouseOver = false;
     }
 
     ngOnInit(): void {
@@ -36,4 +37,5 @@ export class MemeListItemComponent implements OnInit, AfterViewInit {
             console.log(result);
         });
     }
+
 }

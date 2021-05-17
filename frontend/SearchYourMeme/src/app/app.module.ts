@@ -31,6 +31,7 @@ import { ImageSearchDialogComponent } from './image-search-dialog/image-search-d
 import {MatDialogModule} from '@angular/material/dialog';
 import { MemeDetailsDialogComponent } from './meme-details-dialog/meme-details-dialog.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 
 @NgModule({
     declarations: [
@@ -41,7 +42,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
         TextSearchComponent,
         FilterComponent,
         ImageSearchDialogComponent,
-        MemeDetailsDialogComponent
+        MemeDetailsDialogComponent,
+        ErrorDialogComponent
     ],
     imports: [
         AppRoutingModule,

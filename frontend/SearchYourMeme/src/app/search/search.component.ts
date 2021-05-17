@@ -9,6 +9,7 @@ import { AdvancedSearchService } from '../services/advanced-search.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ImageSearchDialogComponent } from '../image-search-dialog/image-search-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 
 @Component({
     selector: 'app-search',
@@ -41,7 +42,7 @@ export class SearchComponent implements OnInit {
             this.AdvancedSearchNext();
         });
         this.advancedSearchService.advancedSearchEvent.subscribe(
-            (obj: {params: QueryParams, first: boolean}) => {
+            (obj: { params: QueryParams, first: boolean }) => {
                 this.filterParams = obj.params;
                 if (!obj.first) {
                     this.AdvanceSearch();
@@ -53,12 +54,10 @@ export class SearchComponent implements OnInit {
     async AdvanceSearch() {
         this.page = 0;
         this.searching.emit(true);
-        if (this.IsImageSearch())
-        {
-            let img_res = await this.searchService.ImageSearch(this.searchBox, this.filterParams, 
+        if (this.IsImageSearch()) {
+            let img_res = await this.searchService.ImageSearch(this.searchBox, this.filterParams,
                 this.page, this.resultsCount);
-            if (!img_res.tags)
-            {
+            if (!img_res.tags) {
                 this.OpenSnackBar("Can not recognize the image", "OK");
             } else {
                 this.searchBox = img_res.tags;
@@ -68,8 +67,19 @@ export class SearchComponent implements OnInit {
         }
         else {
             let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams,
-                this.page, this.resultsCount);
-            this.memesEvent.emit(result);
+                this.page, this.resultsCount).catch(err => {
+                    this.dialog.open(ErrorDialogComponent, { data: { title: 'Connection error 😰', innerHtml: '<p>Somethin bad happened 😣</p><p>Check your connection with internet</p>' } });
+                    this.searching.emit(false);
+                });
+            if (result) {
+                if (result.length > 0) {
+                    this.memesEvent.emit(result);
+                }
+                else {
+                    this.dialog.open(ErrorDialogComponent, { data: { title: 'No memes 😥', innerHtml: '<p>No more memes for you 👨‍🦯👌</p>' } });
+                    this.searching.emit(false);
+                }
+            }
         }
         this.OpenDrawerIfClose();
     }
@@ -78,8 +88,7 @@ export class SearchComponent implements OnInit {
         return this.filterParams && this.filterParams.url;
     }
 
-    RemoveImageFromFilters()
-    {
+    RemoveImageFromFilters() {
         delete this.filterParams.url; // a'la cast
         delete this.filterParams.searchSimilarities; // a'la cast
     }
@@ -101,12 +110,10 @@ export class SearchComponent implements OnInit {
 
     async AdvancedSearchNext() {
         this.searching.emit(true);
-        if (this.IsImageSearch())
-        {
-            let img_res = await this.searchService.ImageSearch(this.searchBox, this.filterParams, 
+        if (this.IsImageSearch()) {
+            let img_res = await this.searchService.ImageSearch(this.searchBox, this.filterParams,
                 this.page, this.resultsCount);
-            if (!img_res.tags)
-            {
+            if (!img_res.tags) {
                 this.OpenSnackBar("Can not recognize the image", "OK");
             } else {
                 this.searchBox = img_res.tags;
@@ -139,9 +146,8 @@ export class SearchComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            if (result)
-            {
-                var imageSearch: ImageQueryParams = {...this.filterParams, url: result, searchSimilarities: true};
+            if (result) {
+                var imageSearch: ImageQueryParams = { ...this.filterParams, url: result, searchSimilarities: true };
                 this.advancedSearchService.Search(imageSearch);
             }
         });
