@@ -1,3 +1,5 @@
+@import "../../styles.scss";
+
 .close-btn{
     color: white;
     visibility: hidden;
@@ -16,8 +18,8 @@ ion-range::part(pin) {
 }
 
 .ranger{
-    --knob-background: #c2185b; 
-    --bar-background-active: #c2185b; 
-    --pin-background: #c2185b;
-    --bar-background: #7f2a4b9e;
+    --knob-background: #{mat-color($primary)}; 
+    --bar-background-active: #{mat-color($primary)}; 
+    --pin-background: #{mat-color($primary)};
+    --bar-background: #{mat-color($primary, 200)};
 }

@@ -1,4 +1,44 @@
-$accent: #227aa1;
+@import '~@angular/material/theming';
+@import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
+
+$mat-myapp-primary: (
+    50 : #e4eff4,
+    100 : #bdd7e3,
+    200 : #91bdd0,
+    300 : #64a2bd,
+    400 : #438eaf,
+    500 : #227aa1,
+    600 : #1e7299,
+    700 : #19678f,
+    800 : #145d85,
+    900 : #0c4a74,
+    A100 : #a6d7ff,
+    A200 : #73c1ff,
+    A400 : #40aaff,
+    A700 : #269fff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$primary: mat-palette($mat-myapp-primary);
+
+$theme: mat-dark-theme($primary, mat-palette($mat-blue-gray));
+
+@include angular-material-theme($theme);
 
 html,
 body {
