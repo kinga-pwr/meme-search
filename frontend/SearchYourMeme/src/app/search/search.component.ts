@@ -10,6 +10,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { ImageSearchDialogComponent } from '../image-search-dialog/image-search-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
+import { ImageFiltersService } from '../services/image-filters.service';
 
 @Component({
     selector: 'app-search',
@@ -32,7 +33,7 @@ export class SearchComponent implements OnInit {
 
     constructor(private searchService: SearchService, private scrollService: ScrollService,
         private advancedSearchService: AdvancedSearchService, public dialog: MatDialog,
-        private _snackBar: MatSnackBar) {
+        private _snackBar: MatSnackBar, private imageFiltersService: ImageFiltersService) {
         this.page = 0;
         this.resultsCount = 20;
     }
@@ -56,14 +57,19 @@ export class SearchComponent implements OnInit {
         this.searching.emit(true);
         if (this.IsImageSearch()) {
             let img_res = await this.searchService.ImageSearch(this.searchBox, this.filterParams,
-                this.page, this.resultsCount);
-            if (!img_res.tags) {
+                this.page, this.resultsCount).catch(err => {
+                    this.dialog.open(ErrorDialogComponent, { data: { title: 'Connection error 😰', innerHtml: '<p>Somethin bad happened 😣</p><p>Image recognize server is not available now</p>' } });
+                    this.searching.emit(false);
+                });
+            if (img_res && !img_res.tags) {
                 this.OpenSnackBar("Can not recognize the image", "OK");
-            } else {
+            } else if (img_res){
+                this.imageFiltersService.TurnOnImageFilters();
                 this.searchBox = img_res.tags;
                 this.memesEvent.emit(img_res.memes);
             }
             this.RemoveImageFromFilters();
+            this.searching.emit(false);
         }
         else {
             let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams,

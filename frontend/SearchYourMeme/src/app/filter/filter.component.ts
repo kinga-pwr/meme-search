@@ -9,6 +9,7 @@ import { Category } from '../models/category';
 import { QueryParams } from '../models/query-params.interface';
 import { Source } from '../models/source';
 import { AdvancedSearchService } from '../services/advanced-search.service';
+import { ImageFiltersService } from '../services/image-filters.service';
 import { InformationService } from '../services/information.service';
 
 @Component({
@@ -32,7 +33,8 @@ export class FilterComponent implements OnInit, AfterViewInit {
     searchCheckboxes: any = [];
 
     constructor(private fb: FormBuilder, private infoService: InformationService,
-        private advancedSearchService: AdvancedSearchService) {
+        private advancedSearchService: AdvancedSearchService,
+        private imageFiltersService: ImageFiltersService) {
         infoService.Categories().subscribe(
             data => {
                 this.categories = data;
@@ -87,6 +89,23 @@ export class FilterComponent implements OnInit, AfterViewInit {
             map(value => typeof value === 'string' ? value : ''),
             map(name => name ? this._filter(this.details, name) : this.details.slice(0, 10))
         );
+
+        this.imageFiltersService.imageSearchEvent.subscribe(
+            () => this.TurnOnOnlyImageFilters()
+        );
+    }
+
+    TurnOnOnlyImageFilters(): any {
+        this.searchCheckboxes.forEach((checkbox: any) => {
+            if (checkbox['name'] !== "Image")
+                checkbox['checked'] = false;
+        });
+
+        this.filterForm.controls.searchFields.setValue(this.searchCheckboxes.filter((s: any) => s['checked']));
+        let to_remove = this.searchCheckboxes.filter((s: any) => !s['checked']);
+        to_remove.forEach((checkbox: any) => {
+            this.RemoveFromFilters(`Search in: ${checkbox['name']}`);
+        });
     }
 
     ngAfterViewInit(): void {
@@ -187,13 +206,19 @@ export class FilterComponent implements OnInit, AfterViewInit {
     SelectedCategory(event: any) {
         var name = `Category: ${event.option.value.name}`;
         if (this.filters.indexOf(name) < 0)
+        {
             this.filters.push(name);
+            this.ClearCategory();
+        }
     }
 
     SelectedDetails(event: any) {
         var name = `Details: ${event.option.value.name}`;
         if (this.filters.indexOf(name) < 0)
+        {
             this.filters.push(name);
+            this.ClearDetails();
+        }
     }
 
     CheckedSearch(event: any, name: string) {
