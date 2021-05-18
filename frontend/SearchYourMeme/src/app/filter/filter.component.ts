@@ -179,7 +179,6 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
     Filter() {
         this.advancedSearchService.Search(this.PrepareParams());
-        this.inputDrawer.close();
     }
 
     PrepareParams(): QueryParams {
