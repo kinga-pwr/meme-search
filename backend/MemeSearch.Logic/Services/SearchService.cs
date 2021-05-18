@@ -110,7 +110,7 @@ namespace MemeSearch.Logic.Services
                     .PreTags("<mark>")
                     .PostTags("</mark>")
                     .Encoder(HighlighterEncoder.Html)
-                    .HighlightQuery(q => HighlightSearch(q, query, parameters))
+                    .HighlightQuery(q => HighlightSearch(q, query.ToLower(), parameters))
                     .Fields(f => f.Field(fl => fl.ContentToSearch)
                                     .Type("plain")
                                     .ForceSource()
@@ -123,7 +123,7 @@ namespace MemeSearch.Logic.Services
             return result.Documents.Select((d, i) => new MemeDto()
             {
                 Title = d.Title,
-                Content = d.Content,
+                Content = ClearContent(d.Content),
                 ImageUrl = d.ImageUrl,
                 ImageTags = d.ImageTags,
                 Status = d.Status,
@@ -133,6 +133,16 @@ namespace MemeSearch.Logic.Services
                 Url = d.Url,
                 ContentHighlight = result.Hits.Select(h => h.Highlight.Any() ? string.Join(" ... ", h.Highlight.First().Value) : null).ElementAt(i)
             });
+        }
+
+        private string ClearContent(string content)
+        {
+            while(content.Contains("\n\n\n\n"))
+            {
+                content = content.Replace("\n\n\n\n", string.Empty);
+            }
+            content = content.Replace("\n", "<br/>");
+            return content;
         }
 
         private static IPromise<IList<ISort>> GetSorting(SortDescriptor<Meme> s, string sort, bool sortAsc)
