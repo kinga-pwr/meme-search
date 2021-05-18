@@ -116,11 +116,11 @@ namespace MemeSearch.Logic.Services
                                     .ForceSource()
                                     .FragmentSize(150)
                                     .Fragmenter(HighlighterFragmenter.Span)
-                                    .NumberOfFragments(3)
+                                    .NumberOfFragments(2)
                                     .NoMatchSize(150)))
                 .Sort(s => GetSorting(s, parameters.Sort, parameters.SortAsc)));
 
-            return result.Documents.Select(d => new MemeDto()
+            return result.Documents.Select((d, i) => new MemeDto()
             {
                 Title = d.Title,
                 Content = d.Content,
@@ -131,7 +131,7 @@ namespace MemeSearch.Logic.Services
                 Year = d.Year,
                 Category = d.Category,
                 Url = d.Url,
-                ContentHighlight = result.Hits.Select(h => h.Highlight.Any() ? string.Join(" ... ", h.Highlight.First().Value) : null).FirstOrDefault()
+                ContentHighlight = result.Hits.Select(h => h.Highlight.Any() ? string.Join(" ... ", h.Highlight.First().Value) : null).ElementAt(i)
             });
         }
 
@@ -280,7 +280,7 @@ namespace MemeSearch.Logic.Services
         #region Highlight
         private static QueryContainer HighlightSearch(QueryContainerDescriptor<Meme> q, string query, SearchParameters parameters)
         {
-            if (!parameters.Fields.Contains("Content")) return new QueryContainer();
+            if (!parameters.Fields.Contains("Content") && !parameters.Fields.Contains("Image")) return new QueryContainer();
 
             var sb = new StringBuilder(query);
 
