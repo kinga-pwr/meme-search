@@ -4,6 +4,7 @@ $img-height: 185px;
     width: 330px;
     max-height: 450px;
     margin-top: 25px;
+    cursor: pointer;
 }
 .card-content {
     height: 76px;
@@ -57,7 +58,7 @@ $img-height: 185px;
     height: $img-height;
     opacity: 0;
     transition: 0.5s ease;
-    background-color: #00000057;
+    background-color: #000000c0;
 }
 
 .text {

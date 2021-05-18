@@ -13,16 +13,25 @@
             <div class="image">
                 <img src="{{meme.imageUrl}}" />
             </div>
-            <div class="info">
-                <p>Status: {{meme.status}}</p>
-                <p>Origin: {{meme.details}}</p>
-                <p>Year: {{meme.year}}</p>
-                <p>Categories: <span *ngFor="let category of meme.categories">{{category}} </span></p>
+            <div class="info prop-name"
+                 fxLayout="row">
+                <div fxlayout="columns">
+                    <p>Status: </p>
+                    <p>Origin: </p>
+                    <p>Year: </p>
+                    <p>Categories: </p>
+                </div>
+                <div class="prop-vals"
+                     fxlayout="column">
+                    <p>{{meme.status}}</p>
+                    <p>{{meme.details}}</p>
+                    <p>{{meme.year}}</p>
+                    <span *ngFor="let category of meme.categories">{{category}}</span>
+                </div>
 
             </div>
         </div>
-        <div class="description">
-            {{meme.content}}
-        </div>
+        <div class="description"
+             [innerHtml]="meme.content"></div>
     </div>
 </div>

@@ -18,6 +18,17 @@ input, .round {
 .corner {
     position: absolute;
     top: 2px;
+    right: 3px;
+    height: 20px;
+    width: 35px;
+    z-index: 10;
+    border-radius: 10px;
+    border: none;
+    color: rgb(255, 255, 255); /* Set the bg image here. with "no-repeat" */
+}
+.corner2 {
+    position: absolute;
+    top: 2px;
     right: -23px;
     height: 20px;
     width: 35px;
@@ -26,7 +37,6 @@ input, .round {
     border: none;
     color: rgb(255, 255, 255); /* Set the bg image here. with "no-repeat" */
 }
-
 .search {
     position: relative;
     width: 350px;
@@ -49,4 +59,9 @@ input, .round {
     font-size: xx-small;
     min-height: 23px;
     opacity: 0;
+}
+
+.snack-error{
+    background:#c82a2a;
+    color:white;
 }

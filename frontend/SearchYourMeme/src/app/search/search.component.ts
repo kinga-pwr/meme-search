@@ -142,7 +142,8 @@ export class SearchComponent implements OnInit {
     OpenSnackBar(message: string, action: string) {
         this._snackBar.open(message, action, {
             horizontalPosition: "end",
-            verticalPosition: "top"
+            verticalPosition: "top",
+            panelClass: ['']
         });
     }
 
@@ -157,6 +158,10 @@ export class SearchComponent implements OnInit {
                 this.advancedSearchService.Search(imageSearch);
             }
         });
+    }
+
+    ClearSearchBar(){
+        this.searchBox = '';
     }
 
 }

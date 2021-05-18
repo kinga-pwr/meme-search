@@ -11,16 +11,26 @@
                        placeholder="Search..."
                        class="round"
                        [(ngModel)]="searchBox"
+                       autofocus
+                       cdkFocusInitial
                        (keyup.enter)="AdvanceSearch()" />
 
-                <button mat-icon-button
+
+                <button (click)="AdvanceSearch()"
                         #searchbtn
+                        class="corner2"
                         color="primary"
-                        (click)="AdvanceSearch()"
-                        class="corner"
                         matTooltip="Search"
-                        matTooltipPosition="above">
+                        matTooltipPosition="above"
+                        mat-icon-button>
                     <mat-icon>search</mat-icon>
+                </button>
+                <button (click)="ClearSearchBar()"
+                        class="corner"
+                        *ngIf="searchBox"
+                        aria-label="Clear"
+                        mat-icon-button>
+                    <mat-icon>close</mat-icon>
                 </button>
 
             </div>
