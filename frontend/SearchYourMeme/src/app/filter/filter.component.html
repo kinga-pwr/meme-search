@@ -59,36 +59,36 @@
         <mat-error *ngIf="f.statuses.hasError('required')">
             Please select at least one status!
         </mat-error>
-        <h3>Details</h3>
+        <h3>Source</h3>
         <mat-form-field appearance="outline"
                         [style.fontSize.px]="12"
                         color="primary"
                         style="max-height: 50px;">
-            <mat-label>Details</mat-label>
+            <mat-label>Source</mat-label>
             <input type="text"
                    matInput
-                   formControlName="details"
-                   placeholder="Search details..."
+                   formControlName="source"
+                   placeholder="Search source..."
                    [matAutocomplete]="autoDetails">
             <button mat-button
-                    *ngIf="f.details.value"
+                    *ngIf="f.source.value"
                     matSuffix
                     mat-icon-button
                     aria-label="Clear"
-                    (click)="ClearDetails()">
+                    (click)="ClearSource()">
                 <mat-icon>close</mat-icon>
             </button>
             <mat-autocomplete autoActiveFirstOption
                               #autoDetails="matAutocomplete"
-                              (optionSelected)="SelectedDetails($event)"
-                              [displayWith]="DisplayDetails">
-                <mat-option *ngFor="let detail of filteredDetails | async"
-                            [value]="detail" [matTooltip]="detail.name + ' (' + detail.quantity + ')'" matTooltipPosition="right">
-                        {{ detail.name }} ({{ detail.quantity }})
+                              (optionSelected)="SelectedSource($event)"
+                              [displayWith]="DisplaySource">
+                <mat-option *ngFor="let source of filteredSources | async"
+                            [value]="source" [matTooltip]="source.name + ' (' + source.quantity + ')'" matTooltipPosition="right">
+                        {{ source.name }} ({{ source.quantity }})
                 </mat-option>
             </mat-autocomplete>
-            <mat-error *ngIf="f.details.hasError('incorrect')">
-                Please select proper details
+            <mat-error *ngIf="f.source.hasError('incorrect')">
+                Please select proper source
             </mat-error>
         </mat-form-field>
         <h3 class="test">Years</h3>

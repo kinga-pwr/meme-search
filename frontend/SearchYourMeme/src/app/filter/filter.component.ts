@@ -24,10 +24,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
     categories: Category[] = [];
     filteredCategories!: Observable<Category[]>;
-    filteredDetails!: Observable<Source[]>;
+    filteredSources!: Observable<Source[]>;
     filterForm!: FormGroup;
     filters: string[] = [];
-    details: Source[] = [];
+    source: Source[] = [];
     statusChips: any = [];
     years: any = { lower: 1968, upper: 2021 };
     searchCheckboxes: any = [];
@@ -44,7 +44,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
         infoService.Source().subscribe(
             data => {
-                this.details = data;
+                this.source = data;
             },
             error => { console.log(error) }
         );
@@ -61,11 +61,11 @@ export class FilterComponent implements OnInit, AfterViewInit {
         );
 
         this.searchCheckboxes = [
-            { name: "Title", checked: "true" },
-            { name: "Image", checked: "true" },
-            { name: "Content", checked: "true" },
-            { name: "Category", checked: "true" },
-            { name: "Details", checked: "true" }];
+            { name: "Title", checked: "true", serverName: "Title" },
+            { name: "Image", checked: "true", serverName: "Image" },
+            { name: "Content", checked: "true", serverName: "Content" },
+            { name: "Category", checked: "true", serverName: "Category" },
+            { name: "Source", checked: "true", serverName: "Details" }];
         this.searchCheckboxes.forEach((search: any) => this.filters.push(`Search in: ${search['name']}`));
 
     }
@@ -73,7 +73,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.filterForm = this.fb.group({
             category: [''],
-            details: [''],
+            source: [''],
             statuses: [[...this.statusChips], Validators.required],
             searchFields: [[...this.searchCheckboxes], Validators.required]
         });
@@ -84,10 +84,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
             map(name => name ? this._filter(this.categories, name) : this.categories.slice(0, 10))
         );
 
-        this.filteredDetails = this.filterForm.controls['details'].valueChanges.pipe(
+        this.filteredSources = this.filterForm.controls['source'].valueChanges.pipe(
             startWith(''),
             map(value => typeof value === 'string' ? value : ''),
-            map(name => name ? this._filter(this.details, name) : this.details.slice(0, 10))
+            map(name => name ? this._filter(this.source, name) : this.source.slice(0, 10))
         );
 
         this.imageFiltersService.imageSearchEvent.subscribe(
@@ -121,8 +121,8 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.filterForm.patchValue({ category: '' });
     }
 
-    ClearDetails() {
-        this.filterForm.patchValue({ details: '' });
+    ClearSource() {
+        this.filterForm.patchValue({ source: '' });
     }
 
     ToggleSelection(chip: MatChip) {
@@ -173,7 +173,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
         return cat ? cat.name : "";
     }
 
-    DisplayDetails(source: Source): string {
+    DisplaySource(source: Source): string {
         return source ? source.name : "";
     }
 
@@ -185,10 +185,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
         var params: QueryParams = {
             status: this.statusChips.filter((s: any) => s.selected).map((s: any) => s.name),
             category: this.filters.filter(f => f.includes("Category:")).map(f => f.split(": ")[1]),
-            details: this.filters.filter(f => f.includes("Details:")).map(f => f.split(": ")[1]),
+            details: this.filters.filter(f => f.includes("Source:")).map(f => f.split(": ")[1]),
             yearFrom: this.years.lower,
             yearTo: this.years.upper,
-            fields: this.searchCheckboxes.filter((s: any) => s.checked).map((s: any) => s.name),
+            fields: this.searchCheckboxes.filter((s: any) => s.checked).map((s: any) => s.serverName),
             sort: null,
             sortAsc: false,
         };
@@ -211,12 +211,12 @@ export class FilterComponent implements OnInit, AfterViewInit {
         }
     }
 
-    SelectedDetails(event: any) {
-        var name = `Details: ${event.option.value.name}`;
+    SelectedSource(event: any) {
+        var name = `Source: ${event.option.value.name}`;
         if (this.filters.indexOf(name) < 0)
         {
             this.filters.push(name);
-            this.ClearDetails();
+            this.ClearSource();
         }
     }
 
