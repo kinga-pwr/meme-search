@@ -52,9 +52,11 @@
             </mat-error>
         </mat-form-field>
         <h3>Status</h3>
-        <mat-chip-list selectable multiple style="align-self: center;">
+        <mat-chip-list selectable multiple style="align-self: center; min-width: 350px;">
             <mat-chip #c="matChip" *ngFor="let chip of statusChips" color="primary" (click)="ToggleSelection(c)" 
-            [selected]="chip.selected" style="cursor: pointer; font-size: small;">{{ chip.name }}</mat-chip>
+            [selected]="chip.selected" style="cursor: pointer; font-size: small;">
+            <mat-icon *ngIf="chip.selected">check</mat-icon>
+            {{ chip.name }}</mat-chip>
         </mat-chip-list>
         <mat-error *ngIf="f.statuses.hasError('required')">
             Please select at least one status!
@@ -139,7 +141,7 @@
             Please select at least one search field!
         </mat-error>
         <h3>Your filters:</h3>
-        <mat-chip-list style="flex-wrap: wrap; max-width: 300px;">
+        <mat-chip-list style="flex-wrap: wrap; max-width: 310px;">
             <mat-chip #c="matChip"
                       *ngFor="let chip of filters"
                       removable="true"

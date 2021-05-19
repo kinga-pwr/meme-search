@@ -128,7 +128,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
     ToggleSelection(chip: MatChip) {
         chip.toggleSelected();
         var current: string[] = this.filterForm.get('statuses')!.value;
-        var selected = this.statusChips.filter((c: any) => c.name === chip.value);
+        var selected = this.statusChips.filter((c: any) => c.name === chip.value.split(' ')[1]);
         selected[0]['selected'] = chip.selected;
 
         if (chip.selected) {
