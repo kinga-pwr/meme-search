@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
-
-namespace MemeSearch.Logic.Models
+﻿namespace MemeSearch.Logic.Models
 {
-    public class ImageSearchResult
+    public class ImageSearchResult : TextSearchResult
     {
         public string Tags { get; set; }
-        public IEnumerable<MemeDto> Memes { get; set; }
+
+        public ImageSearchResult() { }
+
+        public ImageSearchResult(TextSearchResult result) 
+        {
+            NumberOfResults = result.NumberOfResults;
+            Memes = result.Memes;
+        }
     }
 }

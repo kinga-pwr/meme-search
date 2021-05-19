@@ -21,12 +21,12 @@ namespace MemeSearch.Logic.Services
             _imageDetectService = imageDetectService;
         }
 
-        public IEnumerable<MemeDto> StandardSearch(string query, int results, int start)
+        public TextSearchResult StandardSearch(string query, int results, int start)
         {
             return Search(GetStandardQuery, query, new SearchParameters(), results, start);
         }
 
-        public IEnumerable<MemeDto> AdvancedSearch(SearchParameters parameters, string query, int results, int start)
+        public TextSearchResult AdvancedSearch(SearchParameters parameters, string query, int results, int start)
         {
             return Search(GetAdvancedQuery, query, parameters, results, start);
         }
@@ -43,10 +43,9 @@ namespace MemeSearch.Logic.Services
                 imageTags = $"\"{imageTags.Replace(" AND ", " ")}\"";
             }
 
-            return new ImageSearchResult()
+            return new ImageSearchResult(Search(GetAdvancedQuery, imageTags, parameters, results, start))
             {
-                Tags = imageTags,
-                Memes = Search(GetAdvancedQuery, imageTags, parameters, results, start)
+                Tags = imageTags
             };
         }
 
@@ -97,10 +96,9 @@ namespace MemeSearch.Logic.Services
         }
 
         #region Search
-        private IEnumerable<MemeDto> Search(Func<QueryContainerDescriptor<Meme>, string, SearchParameters, QueryContainer> getQuery, 
+        private TextSearchResult Search(Func<QueryContainerDescriptor<Meme>, string, SearchParameters, QueryContainer> getQuery, 
             string query, SearchParameters parameters, int results, int start)
         {
-
             var result = _elasticClient.Search<Meme>(s =>
                 s.From(start)
                 .Size(results)
@@ -120,20 +118,24 @@ namespace MemeSearch.Logic.Services
                                     .NoMatchSize(150)))
                 .Sort(s => GetSorting(s, parameters.Sort, parameters.SortAsc)));
 
-            return result.Documents.Select((d, i) => new MemeDto()
+            return new TextSearchResult()
             {
-                Title = d.Title,
-                Content = ClearContent(d.Content),
-                ImageUrl = d.ImageUrl,
-                ImageTags = d.ImageTags,
-                Status = d.Status,
-                Details = d.Details,
-                Year = d.Year,
-                Category = d.Category,
-                Url = d.Url,
-                ContentHighlight = result.Hits.Select(h => h.Highlight.Any() ? string.Join(" ... ", h.Highlight.First().Value) : null).ElementAt(i)
-            });
-        }
+                NumberOfResults = result.Total,
+                Memes = result.Documents.Select((d, i) => new MemeDto()
+                {
+                    Title = d.Title,
+                    Content = ClearContent(d.Content),
+                    ImageUrl = d.ImageUrl,
+                    ImageTags = d.ImageTags,
+                    Status = d.Status,
+                    Details = d.Details,
+                    Year = d.Year,
+                    Category = d.Category,
+                    Url = d.Url,
+                    ContentHighlight = result.Hits.Select(h => h.Highlight.Any() ? string.Join(" ... ", h.Highlight.First().Value) : null).ElementAt(i)
+                })
+            };
+        }    
 
         private string ClearContent(string content)
         {
