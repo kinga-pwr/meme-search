@@ -1,6 +1,5 @@
-import { Meme } from "./meme";
+import { TextSearchResult } from "./text-search-result.interface";
 
-export interface ImageSearchResult {
-    memes: Meme[];
+export interface ImageSearchResult extends TextSearchResult {
     tags: string;
 }

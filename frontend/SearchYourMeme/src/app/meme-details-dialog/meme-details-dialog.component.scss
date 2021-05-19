@@ -36,3 +36,22 @@
     font-family: 'Segoe UI';
     font-weight: 100;
 }
+
+.nav-button {
+    margin: 10px;
+    height: 50px;
+}
+
+.nav-caption {
+    margin: 0;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.meme-caption {
+    max-width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

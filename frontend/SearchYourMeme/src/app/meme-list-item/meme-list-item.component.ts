@@ -13,6 +13,7 @@ import { Meme } from '../models/meme';
 export class MemeListItemComponent implements OnInit, AfterViewInit {
 
     @Input() meme!: Meme;
+    @Input() memes!: Meme[];
     mouseOver: boolean;
     constructor(public dialog: MatDialog) {
         this.mouseOver = false;
@@ -29,7 +30,11 @@ export class MemeListItemComponent implements OnInit, AfterViewInit {
     OpenDetails() {
         const dialogRef = this.dialog.open(MemeDetailsDialogComponent, {
             width: '80vw',
-            data: this.meme
+            data: {
+                meme: this.meme,
+                memes: this.memes,
+                index: this.memes.indexOf(this.meme)
+            }
         });
 
         dialogRef.afterClosed().subscribe(result => {

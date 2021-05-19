@@ -78,8 +78,8 @@ export class SearchComponent implements OnInit {
                     this.searching.emit(false);
                 });
             if (result) {
-                if (result.length > 0) {
-                    this.memesEvent.emit(result);
+                if (result.memes.length > 0) {
+                    this.memesEvent.emit(result.memes);
                 }
                 else {
                     this.dialog.open(ErrorDialogComponent, { data: { title: 'No memes 😥', innerHtml: '<p>No more memes for you 👨‍🦯👌</p>' } });
@@ -130,7 +130,7 @@ export class SearchComponent implements OnInit {
         else {
             let result = await this.searchService.AdnvancedSearch(this.searchBox, this.filterParams,
                 this.page, this.resultsCount);
-            this.appendMemesEvent.emit(result);
+            this.appendMemesEvent.emit(result.memes);
         }
     }
 

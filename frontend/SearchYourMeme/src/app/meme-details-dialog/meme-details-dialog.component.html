@@ -14,7 +14,7 @@
                 <img src="{{meme.imageUrl}}" />
             </div>
             <div class="info prop-name"
-                 fxLayout="row">
+                 fxLayout="row" style="height: 100%;">
                 <div fxlayout="columns">
                     <p>Status: </p>
                     <p>Origin: </p>
@@ -22,13 +22,31 @@
                     <p>Categories: </p>
                 </div>
                 <div class="prop-vals"
+                style="margin-left: 20px;"
                      fxlayout="column">
                     <p>{{meme.status}}</p>
                     <p>{{meme.details}}</p>
                     <p>{{meme.year}}</p>
                     <span *ngFor="let category of meme.categories">{{category}}</span>
                 </div>
-
+            </div>
+            <div fxLayoutAlign="center center" style="margin-top: 30px; width: 100%;">
+                <mat-chip class="nav-button" #c="matChip" color="primary" selected [disabled]="index === 0" (click)="loadPrev()" style="cursor: pointer; font-size: small; margin-right: 20px;">
+                    <mat-icon>chevron_left</mat-icon>
+                    <div>
+                        <p class="nav-caption">Prev:</p>
+                        <p *ngIf="index === 0" class="nav-caption italic">No previous</p>
+                        <p *ngIf="index !== 0" class="nav-caption meme-caption">{{memes[index - 1].title}}</p>
+                    </div>
+                </mat-chip>
+                <mat-chip class="nav-button" #c="matChip" color="primary" selected [disabled]="index === memes.length - 1"  (click)="loadNext()" style="cursor: pointer; font-size: small; margin-left: 20px;">
+                    <div>
+                        <p class="nav-caption">Next:</p>
+                        <p *ngIf="index === memes.length - 1" class="nav-caption italic">No next</p>
+                        <p *ngIf="index !== memes.length - 1" class="nav-caption meme-caption">{{memes[index + 1].title}}</p>
+                    </div>
+                    <mat-icon>navigate_next</mat-icon>
+                </mat-chip>
             </div>
         </div>
         <div class="description"

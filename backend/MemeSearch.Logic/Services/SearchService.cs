@@ -143,7 +143,7 @@ namespace MemeSearch.Logic.Services
             {
                 content = content.Replace("\n\n\n\n", string.Empty);
             }
-            content = content.Replace("\n", "<br/>");
+            content = content.Trim('\n').Replace("\n", "<br/>");
             return content;
         }
 

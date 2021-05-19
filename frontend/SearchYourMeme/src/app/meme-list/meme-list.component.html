@@ -5,7 +5,8 @@
         <div *ngFor="let meme of memes">
             <mat-grid-tile>
                 <app-meme-list-item class="meme-item"
-                                    [meme]="meme"></app-meme-list-item>
+                                    [meme]="meme"
+                                    [memes]="memes"></app-meme-list-item>
             </mat-grid-tile>
         </div>
 
