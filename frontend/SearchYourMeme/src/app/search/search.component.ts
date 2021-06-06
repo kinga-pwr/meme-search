@@ -23,9 +23,10 @@ export class SearchComponent implements OnInit {
     lastSearch: string = '';
     @Input() inputDrawer!: MatDrawer;
     @Input() queryParams!: any;
-    @Output() memesEvent = new EventEmitter<Meme[]>();
+    @Output() memesEvent = new EventEmitter<any>();
     @Output() appendMemesEvent = new EventEmitter<Meme[]>();
     @Output() searching = new EventEmitter<boolean>();
+    @Input() showImage:boolean;
 
     public page: number;
     public resultsCount: number;
@@ -36,6 +37,7 @@ export class SearchComponent implements OnInit {
         private _snackBar: MatSnackBar, private imageFiltersService: ImageFiltersService) {
         this.page = 0;
         this.resultsCount = 20;
+        this.showImage = true;
     }
     ngOnInit(): void {
         this.scrollService.scrollEvent.subscribe(() => {
@@ -79,7 +81,7 @@ export class SearchComponent implements OnInit {
                 });
             if (result) {
                 if (result.memes.length > 0) {
-                    this.memesEvent.emit(result.memes);
+                    this.memesEvent.emit(result);
                 }
                 else {
                     this.dialog.open(ErrorDialogComponent, { data: { title: 'No memes 😥', innerHtml: '<p>No more memes for you 👨‍🦯👌</p>' } });

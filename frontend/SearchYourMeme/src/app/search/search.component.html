@@ -1,5 +1,6 @@
 <div fxLayout="column">
-    <img src="../assets/logo.png"
+    <img *ngIf="showImage"
+         src="../assets/logo.png"
          width="500px"
          style="transform:rotate(4deg);" />
     <div fxLayout="row"

@@ -13,24 +13,30 @@ import { SearchService } from '../services/search.service';
 export class TextSearchComponent implements OnInit {
     memes!: Meme[];
     searching: boolean = false;
-
+    resultNumber: number;
     @Input() inputDrawer!: MatDrawer;
+    searched: boolean;
 
-    constructor() { }
+    constructor() {
+        this.resultNumber = 0;
+        this.searched = false;
+    }
     SearchingStatus(searching: boolean): void {
         this.searching = searching;
     }
-    SetMemes(memes: Meme[]): void {
-        memes.forEach(m => {
+    SetMemes(memes: { numberOfResults: number, memes: Meme[] }): void {
+        memes.memes.forEach(m => {
             m.categories = m.category.split(' ')
             // ! usuwa categorie Undefined
             // const index = m.categories.indexOf('Undefined', 0);
             // if (index > -1) {
             //     m.categories.splice(index, 1);
             // }
-        })
-        this.memes = memes;
+        });
+        this.memes = memes.memes;
+        this.resultNumber = memes.numberOfResults;
         this.searching = false;
+        this.searched = true;
     }
     ngOnInit(): void {
     }
@@ -42,7 +48,7 @@ export class TextSearchComponent implements OnInit {
             // if (index > -1) {
             //     m.categories.splice(index, 1);
             // }
-        })
+        });
         this.memes = this.memes.concat(memes);
         this.searching = false;
     }
