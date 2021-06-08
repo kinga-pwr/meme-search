@@ -1,51 +1,59 @@
-<div fxLayout="column">
-    <img *ngIf="showImage"
+<div fxLayout="row">
+    <img *ngIf="!showImage"
          src="../assets/logo.png"
-         width="500px"
+         width="200px"
+         height="50px"
          style="transform:rotate(4deg);" />
-    <div fxLayout="row"
-         fxLayoutAlign="center center">
-        <form id="search-form">
-            <div class="search">
-                <input type="text"
-                       name="search"
-                       placeholder="Search..."
-                       class="round"
-                       [(ngModel)]="searchBox"
-                       autofocus
-                       cdkFocusInitial
-                       (keyup.enter)="AdvanceSearch()" />
+
+    <div fxLayout="column">
+        <img *ngIf="showImage"
+            src="../assets/logo.png"
+            width="500px"
+            style="transform:rotate(4deg);" />
+        <div fxLayout="row"
+            fxLayoutAlign="center center">
+            <form id="search-form">
+                <div class="search">
+                    <input type="text"
+                        name="search"
+                        placeholder="Search..."
+                        class="round"
+                        [(ngModel)]="searchBox"
+                        autofocus
+                        cdkFocusInitial
+                        (keyup.enter)="AdvanceSearch()" />
 
 
-                <button (click)="AdvanceSearch()"
-                        #searchbtn
-                        class="corner2"
-                        color="primary"
-                        matTooltip="Search"
-                        matTooltipPosition="above"
-                        mat-icon-button>
-                    <mat-icon>search</mat-icon>
-                </button>
-                <button (click)="ClearSearchBar()"
-                        class="corner"
-                        *ngIf="searchBox"
-                        aria-label="Clear"
-                        mat-icon-button>
-                    <mat-icon>close</mat-icon>
-                </button>
+                    <button (click)="AdvanceSearch()"
+                            #searchbtn
+                            class="corner2"
+                            color="primary"
+                            matTooltip="Search"
+                            matTooltipPosition="above"
+                            mat-icon-button>
+                        <mat-icon>search</mat-icon>
+                    </button>
+                    <button (click)="ClearSearchBar()"
+                            class="corner"
+                            *ngIf="searchBox"
+                            aria-label="Clear"
+                            mat-icon-button>
+                        <mat-icon>close</mat-icon>
+                    </button>
 
-            </div>
-        </form>
-        <button mat-icon-button
-                color="primary"
-                class="filter-btn"
-                matTooltip="Filters"
-                matTooltipPosition="above">
-            <mat-icon>tune</mat-icon>
-        </button>
+                </div>
+            </form>
+            <button mat-icon-button
+                    color="primary"
+                    class="filter-btn"
+                    matTooltip="Filters"
+                    matTooltipPosition="above">
+                <mat-icon>tune</mat-icon>
+            </button>
+        </div>
+        <button fxFlexAlign="flex-end"
+                style="margin-right: 4rem;"
+                mat-button
+                (click)="OpenDialogWithImage()">Search by image</button>
     </div>
-    <button fxFlexAlign="flex-end"
-            style="margin-right: 4rem;"
-            mat-button
-            (click)="OpenDialogWithImage()">Search by image</button>
 </div>
